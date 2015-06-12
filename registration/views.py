@@ -99,6 +99,9 @@ def activate(request, activation_key, invitation=False):
                 activated.in_reserve = False
                 password = User.objects.make_random_password()
                 activated.set_password(password)
+                # Without this, user isn't prompted for a new password when
+                # invited to use My.jobs. See PD-1444
+                activated._User__original_password = activated.password
                 activated.save()
                 ctx['password'] = password
     template = 'registration/%s/activate.html' % settings.PROJECT

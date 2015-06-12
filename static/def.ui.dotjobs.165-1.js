@@ -731,7 +731,6 @@ function var_value_or_default(node,def){
 function get_toolbar(site_name) {
     var site = encodeURIComponent(window.location.protocol + '//' + window.location.hostname);
     $.ajax({
-        //url: "https://secure.my.jobs/topbar/?site_name=" + site_name + '&site=' + site,
       url: ABSOLUTE_URL + "topbar/?site_name=" + site_name + "&site=" + site,
         dataType: "jsonp",
         type: "GET",

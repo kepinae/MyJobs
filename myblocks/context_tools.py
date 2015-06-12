@@ -147,13 +147,19 @@ def get_job(request, job_id):
 
 @Memoized
 def get_jobs_and_counts(request):
+    # Text uses html_description instead of just description.
+    fl = list(helpers.search_fields)
+    fl.remove('description')
+    fl.append('html_description')
+
     filters = get_filters(request)
     site_config = get_site_config(request)
     num_jobs = int(site_config.num_job_items_to_show) * 2
     percent_featured = site_config.percent_featured
 
     args = (request, filters, num_jobs)
-    default_jobs, featured_jobs, facet_counts = helpers.jobs_and_counts(*args)
+    kwargs = {'fl': fl}
+    default_jobs, featured_jobs, facet_counts = helpers.jobs_and_counts(*args, **kwargs)
 
     total_default_jobs = default_jobs.count()
     total_featured_jobs = featured_jobs.count()

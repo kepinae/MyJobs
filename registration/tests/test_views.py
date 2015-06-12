@@ -159,6 +159,21 @@ class RegistrationViewTests(MyJobsBase):
         user = User.objects.get(pk=self.user.pk)
         self.assertFalse(user.is_active)
 
+    def test_invitation_asks_for_password_change(self):
+        """
+        When activating an account via an invitation, the user should still be
+        prompted to change their password.
+        """
+        invitation = InvitationFactory(inviting_user=self.user)
+        key = invitation.invitee.activationprofile_set.first().activation_key
+        response = self.client.get(
+            reverse('invitation_activate', kwargs={'activation_key': key}),
+            data={'verify-email': invitation.invitee_email})
+
+        invitee = User.objects.get(pk=invitation.invitee.pk)
+
+        self.assertTrue(invitee.password_change)
+
     def test_accept_invitation_already_activated(self):
         """
         Since invitations use the same keys as activations, we should ensure

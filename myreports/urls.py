@@ -7,7 +7,6 @@ urlpatterns = patterns(
     url(r'^view/archive$', 'report_archive', name='report_archive'),
     url(r'view/(?P<app>\w+)/(?P<model>\w+)$', ReportView.as_view(),
         name='reports'),
-    url(r'^ajax/get-states', 'get_states', name='get_states'),
     url(r'^ajax/regenerate', 'regenerate', name='regenerate'),
     url(r'^ajax/(?P<app>\w+)/(?P<model>\w+)$',
         'view_records',

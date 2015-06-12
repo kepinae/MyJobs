@@ -64,6 +64,7 @@ urlpatterns += patterns('seo.views.search_views',
 
     # home page
     url(r'^$', search_views.HomePage.as_view(), name="home"),
+    url(r'^site-family$', 'site_family', name='site_family'),
     # all companies page
     url(r'^all-companies/$', 'company_listing', {'group': 'all'},
         name='all-companies_home'),

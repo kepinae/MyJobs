@@ -67,18 +67,6 @@ def report_archive(request):
         return response
 
 
-def get_states(request):
-    """Returns a select widget with states as options."""
-    if request.is_ajax():
-        response = HttpResponse()
-        html = render_to_response('includes/state_dropdown.html',
-                                  {}, RequestContext(request))
-        response.content = html.content
-        return response
-    else:
-        raise Http404("This view is only reachable via an AJAX request")
-
-
 @has_access('prm')
 def view_records(request, app="mypartners", model="contactrecord"):
     """
@@ -98,7 +86,7 @@ def view_records(request, app="mypartners", model="contactrecord"):
     Output:
        A JSON response containing the records queried for.
     """
-    if request.is_ajax() and request.method == 'GET':
+    if request.method == 'GET':
         company = get_company_or_404(request)
 
         # parse request into dict, converting singleton lists into single items
@@ -107,6 +95,8 @@ def view_records(request, app="mypartners", model="contactrecord"):
         # remove non-query related params
         values = params.pop('values', None)
         order_by = params.pop('order_by', None)
+        callback = params.pop('callback', None)
+        params.pop('_', None)
 
         records = get_model(app, model).objects.from_search(
             company, params)

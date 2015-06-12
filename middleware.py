@@ -1,5 +1,7 @@
+import json
 import operator
 import pytz
+from urlparse import urlparse
 
 from django import http
 from django.core.urlresolvers import reverse
@@ -9,8 +11,10 @@ from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.shortcuts import redirect
 
+from corsheaders.middleware import CorsMiddleware
+
 from postajob.models import SitePackage
-from seo.models import SeoSite, SeoSiteRedirect, SeoSiteFacet
+from seo.models import SeoSite, SeoSiteRedirect, SeoSiteFacet, SiteTag
 import version
 
 
@@ -45,49 +49,59 @@ class PasswordChangeRedirectMiddleware:
                                   for url in urls])
 
             if (not url_matches and request.user.password_change):
-                return http.HttpResponseRedirect(reverse('edit_account')
-                                                 + '#as-password')
+                return http.HttpResponseRedirect(
+                    reverse('edit_account') + '#as-password')
 
         elif request.is_ajax() and bool(request.REQUEST.get('next')):
             return http.HttpResponse(status=403)
 
 
-XS_SHARING_ALLOWED_ORIGINS = '*'
-XS_SHARING_ALLOWED_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE']
-XS_SHARING_ALLOWED_HEADERS = 'Content-Type'
-
-
-class XsSharing(object):
+class SiteFamilyCorsMiddleware(CorsMiddleware):
     """
-        This middleware allows cross-domain XHR using the html5 postMessage API.
-
-        Access-Control-Allow-Origin: http://foo.example
-        Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+    Dispatches CORS request based on site family.
     """
+
     def process_request(self, request):
+        callback = request.GET.get("callback")
+        host = urlparse(request.META.get('HTTP_ORIGIN', request.META.get(
+            'HTTP_REFERER', ''))).hostname
+        if host and host != settings.SITE.domain:
+            if not request.user or not request.user.is_authenticated():
+                ctx = json.dumps({'status': 'not authenticated'})
+                return http.HttpResponse(
+                    ctx, content_type="application/json; charset=utf-8")
 
-        if 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' in request.META:
-            response = http.HttpResponse()
-            response['Access-Control-Allow-Origin'] = XS_SHARING_ALLOWED_ORIGINS
-            response['Access-Control-Allow-Headers'] = XS_SHARING_ALLOWED_HEADERS
-            response['Access-Control-Allow-Methods'] = ",".join(
-                XS_SHARING_ALLOWED_METHODS)
+            site = SeoSite.objects.get(domain=host)
+            family = SiteTag.objects.filter(
+                is_site_family=True, seosite=site).filter(
+                    seosite=settings.SITE)
 
-            return response
+            if family.exists():
+                domains = family.first().seosite_set.values_list(
+                    'domain', flat=True)
+                settings.CORS_ORIGIN_WHITELIST = domains
+
+                return super(SiteFamilyCorsMiddleware, self).process_request(
+                    request)
+            else:
+                ctx = json.dumps({'status': 'forbidden'})
+
+                return http.HttpResponse(
+                    ctx, content_type="application/json; charset=utf-8")
 
         return None
 
     def process_response(self, request, response):
-        # Avoid unnecessary work
-        if response.has_header('Access-Control-Allow-Origin'):
-            return response
+        callback = request.GET.get("callback")
 
-        response['Access-Control-Allow-Origin'] = XS_SHARING_ALLOWED_ORIGINS
-        response['Access-Control-Allow-Headers'] = XS_SHARING_ALLOWED_HEADERS
-        response['Access-Control-Allow-Methods'] = ",".join(
-            XS_SHARING_ALLOWED_METHODS)
+        if callback and callback != "populate_toolbar":
+            ctx = "%s(%s)" % (callback, response.content)
 
-        return response
+            return http.HttpResponse(
+                ctx, content_type="text/javascript")
+
+        return super(SiteFamilyCorsMiddleware, self).process_response(
+            request, response)
 
 
 class NewRelic(object):

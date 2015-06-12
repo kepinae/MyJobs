@@ -46,7 +46,7 @@ search_fields = ['apply_info', 'city', 'company', 'company_canonical_microsite',
                  'company_enhanced', 'company_exact', 'company_slab', 'country',
                  'country_short', 'date_new', 'date_updated',
                  'description', 'django_ct', 'django_id', 'guid', 'highlighted',
-                 'html_description', 'id', 'link', 'location',
+                 'id', 'is_posted', 'link', 'location',
                  'location_exact', 'reqid', 'score', 'state',
                  'state_short', 'text', 'title', 'title_exact', 'uid']
 
@@ -532,7 +532,7 @@ def get_bread_box_headings(filters=None, jobs=None):
 def get_jobs(custom_facets=None, exclude_facets=None, jsids=None,
              default_sqs=None, filters={},  fields=None, facet_limit=250,
              facet_sort="count", facet_offset=None, mc=1,
-             sort_order='relevance'):
+             sort_order='relevance', fl=search_fields):
     """
     Returns 3-tuple containing a DESearchQuerySet object, a set of facet
     counts that have been filtered, and a set of unfiltered facet counts.
@@ -559,7 +559,7 @@ def get_jobs(custom_facets=None, exclude_facets=None, jsids=None,
     sqs = sqs_apply_custom_facets(custom_facets, sqs, exclude_facets)
     sqs = _sqs_narrow_by_buid_and_site_package(sqs, buids=jsids)
     # Limit the retrieved results to only fields that are actually needed.
-    #sqs = sqs.fields(search_fields)
+    sqs = sqs.fields(fl)
 
     sqs = sqs.order_by(sort_order_mapper.get(sort_order, '-score'))
 
@@ -1396,7 +1396,7 @@ def add_text_to_job(job):
     return job
 
 
-def jobs_and_counts(request, filters, num_jobs):
+def jobs_and_counts(request, filters, num_jobs, fl=search_fields):
     sort_order = request.GET.get('sort', 'relevance')
 
     sqs = prepare_sqs_from_search_params(request.GET)
@@ -1404,11 +1404,12 @@ def jobs_and_counts(request, filters, num_jobs):
                             custom_facets=settings.DEFAULT_FACET,
                             exclude_facets=settings.FEATURED_FACET,
                             jsids=settings.SITE_BUIDS, filters=filters,
-                            facet_limit=num_jobs, sort_order=sort_order)
+                            facet_limit=num_jobs, sort_order=sort_order,
+                            fl=fl)
     featured_jobs = get_featured_jobs(default_sqs=sqs, filters=filters,
                                       jsids=settings.SITE_BUIDS,
                                       facet_limit=num_jobs,
-                                      sort_order=sort_order)
+                                      sort_order=sort_order, fl=fl)
 
     # Force the query to evaluate and populate the result cache. After this
     # unless changes are made to the sqs objects

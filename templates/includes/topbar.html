@@ -335,8 +335,12 @@
             // Get company name from cid, if cid exists
             if(!menu_company_name) {
                 if(cid) {
-                    if(data[i].id == cid)
+                    if(data[i].id == cid) {
                         menu_company_name = data[i].name;
+                    } else {
+                        set_cookie(data[0].id, 14);
+                        menu_company_name = data[0].name;
+                    }
                 }
                 else {
                     set_cookie(data[0].id, 14);

@@ -174,6 +174,24 @@ class SolrTests(MyJobsBase):
         self.assertEqual(expected['User_email'], result['User_email'])
         self.assertEqual(expected['SavedSearch_url'], result['SavedSearch_url'])
 
+    def test_savedsearch_no_user(self):
+        """
+        A saved search with a null recipient should never be inserted in Solr
+        """
+        solr = Solr()
+        SavedSearchFactory()
+        update_solr_task(self.test_solr)
+        results = solr.search(q='*:*')
+        # One hit for the search, one for its recipient
+        self.assertEqual(results.hits, 2)
+
+        solr.delete()
+        search = SavedSearchFactory(user=None)
+        self.assertEqual(object_to_dict(SavedSearch, search), None)
+        update_solr_task(self.test_solr)
+        results = solr.search(q='*:*')
+        self.assertEqual(results.hits, 0)
+
     def test_address_slabs(self):
         expected = {
             'Address_content_type_id': [26],

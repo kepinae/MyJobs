@@ -90,9 +90,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'middleware.MultiHostMiddleware',
+    'middleware.SiteFamilyCorsMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     'middleware.PasswordChangeRedirectMiddleware',
-    'middleware.XsSharing',
     'django.middleware.locale.LocaleMiddleware',
     'middleware.CompactP3PMiddleware',
     'middleware.TimezoneMiddleware',
@@ -273,6 +273,7 @@ INSTALLED_APPS = (
     'saved_search',
     'taggit',
     'fsm',
+    'corsheaders',
 )
 
 # Captcha SSL
@@ -591,3 +592,6 @@ EMAIL_FORMATS = {
 }
 
 MEMOIZE = True
+
+CORS_ORIGIN_WHITELIST = ()
+CORS_ALLOW_CREDENTIALS = True

@@ -161,16 +161,19 @@ def object_to_dict(model, obj):
     }
 
     if model == SavedSearch:
-        solr_dict['SavedSearch_company_id'] = obj.get_company()
+        if obj.user:
+            solr_dict['SavedSearch_company_id'] = obj.get_company()
 
-        for field in User._meta.fields:
-            field_type = field.get_internal_type()
-            if (field_type != 'OneToOneField' and
-                    not any(s in field.attname
-                            for s in ['password', 'timezone',
-                                      'deactivate_type'])):
-                field_name = "User_%s" % field.attname
-                solr_dict[field_name] = getattr(obj.user, field.attname)
+            for field in User._meta.fields:
+                field_type = field.get_internal_type()
+                if (field_type != 'OneToOneField' and
+                        not any(s in field.attname
+                                for s in ['password', 'timezone',
+                                          'deactivate_type'])):
+                    field_name = "User_%s" % field.attname
+                    solr_dict[field_name] = getattr(obj.user, field.attname)
+        else:
+            return None
 
     for field in model._meta.fields:
         field_type = field.get_internal_type()

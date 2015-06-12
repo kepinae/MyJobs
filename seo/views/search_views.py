@@ -76,6 +76,21 @@ items down to what we actually need.
 LOG = logging.getLogger('views')
 
 
+def site_family(request):
+    callback = request.GET.get("callback")
+    ctx = {'user': request.user}
+    response = render_to_response(
+        'seo/site_family.html', ctx, content_type='text/html')
+
+    if callback:
+        content = "%s(%s)" % (callback, json.dumps(response.content))
+        response = HttpResponse(content_type='text/javascript')
+        response.content = content
+        return response
+    else:
+        return response
+
+
 def find_page(request, page_type):
     page = None
     if request.user.is_authenticated() and request.user.is_staff:
@@ -1706,8 +1721,18 @@ def search_by_results_and_slugs(request, *args, **kwargs):
             if len(active_facets) == 1 and active_facets[0].blurb:
                 facet_blurb_facet = active_facets[0]
 
+    # Text uses html_description instead of just description.
+    fl = list(helpers.search_fields)
+    index = fl.index('description')
+    fl.pop(index)
+    # We use the html_description to show highlighted snippets of the
+    # description that match the search term. If there is no search
+    # term there's no reason to even get the html_description.
+    if q_term:
+        fl.append('html_description')
+
     default_jobs, featured_jobs, facet_counts = helpers.jobs_and_counts(
-        request, filters, num_jobs)
+        request, filters, num_jobs, fl=fl)
 
     total_featured_jobs = featured_jobs.count()
     total_default_jobs = default_jobs.count()
@@ -1726,8 +1751,9 @@ def search_by_results_and_slugs(request, *args, **kwargs):
     featured_jobs = featured_jobs[:num_featured_jobs]
 
     jobs = list(itertools.chain(featured_jobs, default_jobs))
-    for job in jobs:
-        helpers.add_text_to_job(job)
+    if query_path:
+        for job in jobs:
+            helpers.add_text_to_job(job)
     
     breadbox = Breadbox(request.path, filters, jobs, request.GET)
 

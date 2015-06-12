@@ -179,10 +179,6 @@ def add_pagination(request, object_list, per_page=None):
     return pagination
 
 
-def has_mx_record(domain):
-    return True
-
-
 def send_email(email_body, email_type=settings.GENERIC,
                recipients=None, site=None, headers=None, **kwargs):
     recipients = recipients or []

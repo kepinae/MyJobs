@@ -334,7 +334,12 @@ def update_solr_task(solr_location=None):
         content_type, key = obj.uid.split("##")
         model = ContentType.objects.get_for_id(content_type).model_class()
         if model == SavedSearch:
-            updates.append(object_to_dict(model, model.objects.get(pk=key)))
+            search = model.objects.get(pk=key)
+            # Saved search recipients can currently be null; Displaying these
+            # searches may be implemented in the future but will likely require
+            # some template work.
+            if search.user:
+                updates.append(object_to_dict(model, search))
         # If the user is being updated, because the user is stored on the
         # SavedSearch document, every SavedSearch belonging to that user
         # also has to be updated.
@@ -389,7 +394,7 @@ def task_reindex_solr(solr_location=None):
     for x in u:
         l.append(profileunits_to_dict(x))
 
-    s = SavedSearch.objects.all()
+    s = SavedSearch.objects.filter(user__isnull=False)
     for x in s:
         saved_search_dict = object_to_dict(SavedSearch, x)
         saved_search_dict['doc_type'] = 'savedsearch'

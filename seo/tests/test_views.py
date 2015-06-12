@@ -1858,7 +1858,23 @@ class SeoViewsTestCase(DirectSEOTestCase):
             '/pasadena/texas/usa/jobs/engineering-jobs/new-jobs/',
             follow=True)
         self.assertEqual(resp.status_code, 200)
-        
+
+    def test_feed_items(self):
+        site = SeoSite.objects.get(id=1)
+        site.business_units = [self.buid_id]
+        site.save()
+        expected_fields = ['country_short', 'city', 'description', 'date_new',
+                           'url', 'country', 'company', 'title', 'reqid',
+                           'state', 'state_short', 'location', 'guid', 'uid']
+
+        response = self.client.get('/feed/json')
+        jobs = json.loads(response.content)
+        job = jobs[0]
+        self.assertItemsEqual(expected_fields, job.keys())
+        for field in expected_fields:
+            self.assertIsNotNone(job[field])
+            self.assertNotEqual(job[field], 'None')
+
     def test_syndicate_feed_paging(self):
         feed_types = {'xml': 'xml', 'indeed': 'xml'}
         # Since the BusinessUnit id for our test XML feed is set to 0 on the
