@@ -265,12 +265,12 @@ def hr_xml_to_json(xml, business_unit):
     except ValueError:
         logger.error("Unable to parse string %s as a date", date_new)
         raise
-    on_sites = job.get('on_sites', None)
 
-    if not on_sites:
-        job['on_sites'] = [0]
-    else:
-        job['on_sites'] = [int(x) for x in on_sites.split(',')]
+    # Determine what sites these jobs should be on
+    on_sites = set(business_unit.site_packages.values_list('pk', flat=True))
+    on_sites = filter(None, on_sites)
+    job['on_sites'] = on_sites or [0]
+
 
     # This has to be seo.joblisting, otherwise the jobs won't be included
     # in the search results.

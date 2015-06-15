@@ -2,9 +2,18 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey
-from django.db import models
+from django.core.mail import send_mail
+from django.db import models, OperationalError
+from django.db.models.signals import pre_save, post_save
 from django.template import Template, Context
 from django.utils.translation import ugettext_lazy as _
+
+from myemails.signals import (
+    cron_post_save, value_pre_save, value_post_save,  post_add_invoice,
+    pre_add_invoice
+)
+from seo.models import CompanyUser
+import tasks
 
 
 class EmailSection(models.Model):
@@ -39,19 +48,20 @@ class EmailTemplate(models.Model):
         Builds context based on a generic number of things that
         a user might want to include in an email.
 
-        :param for_object: The object the context is being built for.
+        Inputs:
+        :for_object: The object the context is being built for.
         :return: A dictionary of context for the templates to use.
 
         """
-        context = {}
-        # TODO: Build context based on object passed to the function.
+        context = for_object.context()
         return Context(context)
 
     def render(self, for_object):
         """
         Renders the EmailTemplate for a given object.
 
-        :param for_object: The object the email is being rendered for.
+        Inputs:
+        :for_object: The object the email is being rendered for.
         :return: The rendered email.
         """
         context = self.build_context(for_object)
@@ -73,15 +83,88 @@ class Event(models.Model):
     class Meta:
         abstract = True
 
+    def schedule_task(self, for_object):
+        """
+        Creates an EmailTask for the for_object.
+
+        Inputs:
+        :for_object: The object that will have an email sent for it
+                     in the future.
+
+        Returns:
+        :return: The created EamilTask.
+        """
+        return EmailTask.objects.create(
+            act_on=for_object,
+            related_event=self,
+            scheduled_for=self.schedule_for(for_object)
+        )
+
+    def schedule_for(self, for_object):
+        """
+        Determines what time an event should be scheduled for; Unless
+        overridden in a subclass, this defaults to right now.
+
+        Inputs:
+        :for_object: Object being scheduled; not used in the default method.
+
+        Returns:
+        :return: Time to schedule an event.
+        """
+        return datetime.now()
+
     def send_email(self, for_object):
         """
         Sends an email for a for_object.
 
-        :param for_object: The object an email is being sent for.
-
+        Inputs:
+        :for_object: The object an email is being sent for.
         """
-        email_content = self.email_template.render(for_object)
-        # TODO: Write actual send email logic
+        subject = ''
+        if self.model.model == 'purchasedjob':
+            # host company to purchaser
+            recipient_company = for_object.owner
+            sending_company = for_object.purchased_product.product.owner
+        elif self.model.model == 'purchasedproduct':
+            # host company to purchaser
+            recipient_company = for_object.owner
+            sending_company = for_object.product.owner
+        elif self.model.model == 'request':
+            # purchaser to host company
+            recipient_company = for_object.owner
+            sending_company = for_object.requesting_company()
+            subject = '%s has submitted a new request' % sending_company.name
+        elif self.model.model == 'invoice':
+            # host company to purchaser
+            recipient_company = for_object.purchasedproduct_set.first()\
+                .product.owner
+            sending_company = for_object.owner
+            subject = 'Your invoice from %s' % sending_company.name
+        else:
+            raise NotImplementedError('Add %s here somewhere!' %
+                                      self.model.model)
+
+        if not subject:
+            subject = 'An update on your %s' % self.model.name
+
+        recipients = CompanyUser.objects.filter(
+            company=recipient_company).values_list('user__email',
+                                                   flat=True)
+        if hasattr(sending_company, 'companyprofile'):
+            email_domain = sending_company.companyprofile.outgoing_email_domain
+        else:
+            email_domain = 'my.jobs'
+
+        body = self.email_template.render(for_object)
+        send_mail(subject, body, '%s@%s' % (self.model.model, email_domain),
+                  recipients)
+
+
+CRON_EVENT_MODELS = ['purchasedjob', 'purchasedproduct']
+VALUE_EVENT_MODELS = ['purchasedjob', 'purchasedproduct', 'request']
+CREATED_EVENT_MODELS = ['invoice']
+ALL_EVENT_MODELS = set().union(CRON_EVENT_MODELS, VALUE_EVENT_MODELS,
+                               CREATED_EVENT_MODELS)
 
 
 class CronEvent(Event):
@@ -90,26 +173,17 @@ class CronEvent(Event):
                                   'purchasedjob',
                                   'purchasedproduct']})
     field = models.CharField(max_length=255, blank=True)
-    minutes = models.PositiveIntegerField()
+    minutes = models.IntegerField()
 
-    def schedule_task(self, for_object):
+    def schedule_for(self, for_object):
         """
-        Creates an EmailCronTask for the for_object.
+        Determines what time for_object should be scheduled.
 
-        :param for_object: The object that will have an email sent for it
-                           in the future.
-        :return: The created EamilCronTask.
-        """
-        return EmailTask.objects.create(
-            act_on=for_object,
-            related_event=self,
-            scheduled_for=self.scheduled_for(for_object)
-        )
+        Inputs:
+        :for_object: Object being used to determine send time.
 
-    def scheduled_for(self, for_object):
-        """
+        Returns:
         :return: The next valid time this Event would be scheduled for.
-
         """
         base_time = getattr(for_object, self.field, datetime.now())
         if base_time is None or base_time == '':
@@ -119,9 +193,9 @@ class CronEvent(Event):
 
 class ValueEvent(Event):
     COMPARISON_CHOICES = (
-        ('', 'is equal to'),
-        ('__gte', 'is greater than or equal to'),
-        ('__lte', 'is less than or equal to'),
+        ('eq', 'is equal to'),
+        ('ge', 'is greater than or equal to'),
+        ('le', 'is less than or equal to'),
     )
 
     compare_using = models.CharField(_('Comparison Type'),
@@ -134,15 +208,12 @@ class ValueEvent(Event):
     field = models.CharField(max_length=255)
     value = models.PositiveIntegerField()
 
-    def schedule_task(self, for_object):
-        return EmailTask.objects.create(
-            act_on=for_object,
-            related_event=self,
-            scheduled_for=datetime.now()
-        )
 
-    def schedule_for(self, for_object):
-        return datetime.now()
+class CreatedEvent(Event):
+    model = models.ForeignKey(ContentType,
+                              limit_choices_to={'model__in': [
+                                  'invoice'
+                              ]})
 
 
 class EmailTask(models.Model):
@@ -158,9 +229,70 @@ class EmailTask(models.Model):
 
     completed_on = models.DateTimeField(blank=True, null=True)
 
-    scheduled_for = models.DateTimeField()
+    scheduled_for = models.DateTimeField(default=datetime.now)
     scheduled_at = models.DateTimeField(auto_now_add=True)
+
+    task_id = models.CharField(max_length=36, blank=True, default='',
+                               help_text='guid with dashes')
 
     @property
     def completed(self):
         return bool(self.completed_on)
+
+    def schedule(self):
+        """
+        Submits this task to Celery for processing.
+        """
+        tasks.send_event_email.apply_async(args=[self], eta=self.scheduled_for)
+
+    def send_email(self):
+        self.related_event.send_email(self.act_on)
+
+
+# The receivers used are defined in myemails.signals but bound here. If they
+# were to be bound in myemails.signals as well, we would have a few interesting
+# and infuriating import issues.
+bind_events = lambda type_, sender, pre=None, post=None: [
+    pre_save.connect(pre, sender=sender,
+                     dispatch_uid='pre_save__%s_%s' % (
+                         model, type_)) if pre else None,
+    post_save.connect(post, sender=sender,
+                      dispatch_uid='post_save__%s_%s' % (
+                          model, type_)) if post else None]
+"""
+Binds the provided sender to pre_save and post_save signals.
+
+Inputs:
+:type_: Type of event being bound (cron, value, created)
+:sender: Model being bound
+:pre: Method to be bound to the pre_save signal; default: None
+:post: Method to be bound to the post_save signal; default: None
+"""
+
+model_map = {}
+try:
+    for model in ALL_EVENT_MODELS:
+        # Invoice is a foreign key on PurchasedProduct; if we're looking
+        # at an invoice, bind signals on purchased product instead.
+        content_type = model if model != 'invoice' else 'purchasedproduct'
+        model_map[model] = ContentType.objects.get(
+            model=content_type).model_class()
+except OperationalError:
+    # We're running syncdb and the ContentType table doesn't exist yet
+    pass
+else:
+    for model, Model in model_map.items():
+        if model in CRON_EVENT_MODELS:
+            bind_events('cron', Model, post=cron_post_save)
+        if model in VALUE_EVENT_MODELS:
+            bind_events('value', Model, value_pre_save, value_post_save)
+        if model in CREATED_EVENT_MODELS:
+            if model == 'invoice':
+                bind_events('created', Model, pre_add_invoice,
+                            post_add_invoice)
+            else:
+                # There are no other valid models for this choice, but there
+                # likely will be in the future. I'm not writing something that
+                # will certainly be wrong, so let's put it off until it's
+                # relevant. - TP
+                raise NotImplementedError('Add some signals for %s!' % model)

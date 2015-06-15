@@ -143,6 +143,11 @@ def merge_accounts(request, activation_key):
         search.user = existing_user
         search.save()
 
+    for status in new_user.status_set.all():
+        status.approved_by = existing_user
+        status.save()
+
+
     # Remove the new user and activation profile
     activation_profile.delete()
     new_user.delete()

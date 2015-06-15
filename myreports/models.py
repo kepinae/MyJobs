@@ -20,10 +20,11 @@ class Report(models.Model):
                     `referrals` from the `ContactRecord` model).
     """
     name = models.CharField(max_length=50)
-    created_by = models.ForeignKey('myjobs.User')
+    created_by = models.ForeignKey(
+        'myjobs.User', null=True, on_delete=models.SET_NULL)
     owner = models.ForeignKey('seo.Company')
     created_on = models.DateTimeField(auto_now_add=True)
-    order_by = models.CharField(max_length=50, blank=True)
+    order_by = models.CharField(max_length=50, blank=True, default='')
     app = models.CharField(default='mypartners', max_length=50)
     model = models.CharField(default='contactrecord', max_length=50)
     # included columns and sort order
@@ -38,13 +39,13 @@ class Report(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(Report, self).__init__(*args, **kwargs)
+        self._results = '{}'
+
         if self.results:
             try:
                 self._results = self.results.read()
             except IOError:
                 self.results.delete()
-        else:
-            self._results = '{}'
 
     @property
     def json(self):
@@ -65,10 +66,11 @@ class Report(models.Model):
 
     def regenerate(self):
         """Regenerate the report file if it doesn't already exist on disk."""
-        if not self.results:
-            values = json.loads(self.values)
-            contents = serialize('json', self.queryset, values=values)
-            results = ContentFile(contents)
+        contents = serialize('json', self.queryset)
+        results = ContentFile(contents)
 
-            self.results.save('%s-%s.json' % (self.name, self.pk), results)
-            self._results = contents
+        if self.results:
+            self.results.delete()
+
+        self.results.save('%s-%s.json' % (self.name, self.pk), results)
+        self._results = contents

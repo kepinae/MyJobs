@@ -10,7 +10,7 @@ from mydashboard.tests.factories import CompanyFactory
 from mypartners.tests.factories import (ContactFactory, ContactRecordFactory,
                                         LocationFactory, PartnerFactory,
                                         TagFactory)
-from mypartners.models import Contact, Location, Partner, PRMAttachment
+from mypartners.models import Contact, Location, Partner, PRMAttachment, Status
 from mysearches.models import PartnerSavedSearch
 from mysearches.tests.factories import PartnerSavedSearchFactory
 
@@ -165,3 +165,30 @@ class MyPartnerTests(MyJobsBase):
         self.contact.delete()
         self.assertEqual(len(Contact.objects.all()), 1)
         self.assertTrue(self.contact.archived_on)
+
+    def test_models_approved(self):
+        """
+        By default, new partners, contacts, and contactrecords should be
+        approved.
+        """
+
+        contactrecord = ContactRecordFactory(partner=self.partner)
+
+        for instance in (self.contact, self.partner, contactrecord):
+            self.assertEqual(instance.approval_status.code, Status.APPROVED)
+
+    def test_contact_locations(self):
+        """
+        Test that `get_contact_locations` returns a properly formatted string.
+        """
+        ny = LocationFactory.create_batch(2, city="Albany", state="NY")
+        il = LocationFactory.create(city="Chicago", state="IL")
+        mo = LocationFactory.create(city="St. Louis", state="MO")
+
+        contacts = ContactFactory.create_batch(4, partner=self.partner)
+        for contact, location in zip(contacts, ny + [il, mo]):
+            contact.locations.add(location)
+
+        self.assertEqual("Chicago, IL; St. Louis, MO; Albany, NY", 
+                         "; ".join(self.partner.get_contact_locations()))
+

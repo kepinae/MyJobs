@@ -164,8 +164,21 @@ class SavedSearchModelsTests(MyJobsBase):
         email = mail.outbox.pop()
         self.assertEqual(email.body.find(search.url),
                          -1)
-        self.assertNotEqual(email.body.find(search.feed.replace('/feed/rss', '')),
-                            -1)
+        self.assertNotEqual(
+            email.body.find(search.feed.replace('/feed/rss', '')), -1)
+
+    def test_unicode_in_saved_search(self):
+        """Tests that saved search urls with unicode don't cause errors."""
+        search = SavedSearchFactory(
+            user=self.user, 
+            url=u"warehouse.jobs/search?location=Roswell%2C+GA&q=Delivery+I"
+                "+%E2%80%93+Material+Handler%2FDriver+Helper+%E2%80%93+3rd"
+                "+Shift%2C+Part-time")
+
+        try:
+            search.send_email()
+        except UnicodeEncodeError as e:
+            self.fail(e)
 
     def assert_modules_in_hrefs(self, modules):
         """

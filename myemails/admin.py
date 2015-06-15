@@ -29,9 +29,14 @@ class CronEventAdmin(RequestAdmin):
         }),
         ('Comparison', {
             'description': (
-                'Send an email after an amount of time has passed since an '
-                'event occurred. The current options are for demonstration '
-                'purposes only and may not be appropriate for actual events.'
+                'Send an email relative to some time period, e.g. a number '
+                'of hours (in minutes) before a purchased product expires. '
+                'Positive values indicate that an email should be sent after '
+                'the time period has occurred (30 minutes after expiration) '
+                'while negative values mean before that time has passed (30 '
+                'minutes before expiration). The current options are for '
+                'demonstration purposes only and may not be appropriate for '
+                'actual events.'
             ),
             'fields': [
                 'model',
@@ -80,5 +85,6 @@ class ValueEventAdmin(RequestAdmin):
 
 admin.site.register(models.CronEvent, CronEventAdmin)
 admin.site.register(models.ValueEvent, ValueEventAdmin)
+admin.site.register(models.CreatedEvent)
 admin.site.register(models.EmailTemplate)
 admin.site.register(models.EmailSection)

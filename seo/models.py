@@ -514,8 +514,12 @@ class SeoSite(Site):
     special_commitments = models.ManyToManyField('SpecialCommitment',
                                                  blank=True, null=True)
     site_tags = models.ManyToManyField('SiteTag', blank=True, null=True)
+
+    # The "designated" site package specific to this seosite.
+    # This site should be the only site attached to site_package.
     site_package = models.ForeignKey('postajob.SitePackage', null=True,
                                      on_delete=models.SET_NULL)
+
     postajob_filter_type = models.CharField(max_length=255,
                                             choices=postajob_filter_options,
                                             default='this site only')
@@ -1275,12 +1279,15 @@ class BusinessUnit(models.Model):
     associated_jobs = models.IntegerField('Associated Jobs', default=0)
     customcareers = generic.GenericRelation(moc_models.CustomCareer)
     federal_contractor = models.BooleanField(default=False)
-    ignore_includeinindex = models.BooleanField('Ignore "Include In Index"', default=False)
+    ignore_includeinindex = models.BooleanField('Ignore "Include In Index"',
+                                                default=False)
 
     # True if a BusinessUnit's descriptions are in markdown
     # Assumes that new business units will have support markdown
     enable_markdown = models.BooleanField('Enable Markdown for job '
                                           'descriptions', default=True)
+    site_packages = models.ManyToManyField('postajob.SitePackage', null=True,
+                                           blank=True)
 
     @staticmethod
     def clear_cache(buid):

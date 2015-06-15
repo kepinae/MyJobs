@@ -345,7 +345,7 @@ ul.submenu > li > a:hover {
     display: none;
 }
 
-@media screen and (max-width: 992px) {
+@media screen and (max-width: 800px) {
     .wrapper {
         width: 100%;
         margin: 0 auto;
@@ -517,7 +517,8 @@ ul.submenu > li > a:hover {
         margin-top: -19px;
     }
 }
-@media screen and (min-width: 993px) {
+
+@media screen and (min-width: 801px) {
     #nav ul#pop-menu {
         right: 0;
     }

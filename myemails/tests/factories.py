@@ -66,3 +66,14 @@ class CronEventFactory(django.DjangoModelFactory):
     field = ''
 
     minutes = 10
+
+
+class CreatedEventFactory(django.DjangoModelFactory):
+    class Meta:
+        model = 'myemails.CreatedEvent'
+
+    email_template = SubFactory(EmailTemplateFactory)
+    is_active = True
+    owner = SubFactory(CompanyFactory)
+
+    model = ContentType.objects.get_for_model(Event)

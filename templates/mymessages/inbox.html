@@ -1,43 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div id="inbox" class="span12">
-        {% if messages %}
-            <table class="table">
-                <tr><th>{# message type #}</th><th>Date</th><th>Message</th><th>{# actions #}</th></tr>
-                <tbody id="messages">
-                    {% include 'mymessages/includes/messages.html' %}
-                </tbody>
-            </table>
-            <div class="pagination">
-                <span class="step-links">
-                    {% if messages.has_previous %}
-                        <a id="previous_page" href="?page={{ messages.previous_page_number }}">&#8592; Previous</a>
-                    {% endif %}
+    <div class="row"
+        <div id="inbox" class="span12">
+            {% if messages %}
+                <table class="table">
+                    <tr><th>{# message type #}</th><th>Date</th><th>Message</th><th>{# actions #}</th></tr>
+                    <tbody id="messages">
+                        {% include 'mymessages/includes/messages.html' %}
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if messages.has_previous %}
+                            <a id="previous_page" href="?page={{ messages.previous_page_number }}">&#8592; Previous</a>
+                        {% endif %}
 
-                    <span class="current">
-                        Page {{ messages.number }} of {{ messages.paginator.num_pages }}
+                        <span class="current">
+                            Page {{ messages.number }} of {{ messages.paginator.num_pages }}
+                        </span>
+
+                        {% if messages.has_next %}
+                            <a id="next_page" class="pull-right" href="?page={{ messages.next_page_number }}">Next &#8594;</a>
+                        {% endif %}
                     </span>
+                </div>
+            {% else %}
+                <p>No messages</p>
+            {% endif %}
+        </div>
+    {% endblock %}
 
-                    {% if messages.has_next %}
-                        <a id="next_page" class="pull-right" href="?page={{ messages.next_page_number }}">Next &#8594;</a>
-                    {% endif %}
-                </span>
-            </div>
-        {% else %}
-            <p>No messages</p>
+    {% block extra-js %}
+        <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/bootstrap-modalmanager.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/bootstrap-modal.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}inbox.160-29.js"></script>
+        {% if clicked %}
+            <script type="text/javascript">
+                var clicked = {{ clicked }};
+            </script>
         {% endif %}
     </div>
-{% endblock %}
-
-{% block extra-js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/bootstrap-modalmanager.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/bootstrap-modal.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}inbox.160-29.js"></script>
-    {% if clicked %}
-        <script type="text/javascript">
-            var clicked = {{ clicked }};
-        </script>
-    {% endif %}
 {% endblock %}
 
 {% block activation_message %}

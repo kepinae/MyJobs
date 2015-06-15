@@ -258,7 +258,8 @@ class BusinessUnitAdmin(admin.ModelAdmin):
                                 'associated_jobs', 'federal_contractor',
                                 'enable_markdown', 'ignore_includeinindex'),
                                ('date_crawled', 'date_updated')]}),
-        ('Sites', {'fields': ['sites']})
+        ('Sites', {'fields': ['sites']}),
+        ('Imports', {'fields': ['site_packages']}),
     ]
     change_form_template = "admin/seo/businessunit/change_form.html"
 

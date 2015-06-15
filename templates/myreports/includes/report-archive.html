@@ -2,14 +2,14 @@
     <table class="table table-striped report-table">
         <tbody>
             {% for report in reports %}
-            <tr data-report="{{ report.id }}">
+            <tr data-report="{{ report.id }}" data-model="{{ report.model }}">
                 <td>
-                    <div title="View Report" class="view-report">
+                    <div title="View Report" class="view-report {% if not report.results %}disabled{% endif %}">
                         <a title="View Report">{{ report.name }}</a>
                     </div>
                 </td>
                 <td>
-                    <div title="View Report" class="view-report">
+                    <div title="View Report" class="view-report {% if not report.results %}disabled{% endif %}">
                         <i class="fa fa-eye"></i> View Report
                     </div>
                 </td>
@@ -19,15 +19,14 @@
                     </div>
                 </td>
                 <td>
-                    {% if report.results %}
-                    <div title="Export Report" class="export-report">
-                        <i class="fa fa-download"></i> Export Report
-                    </div>
-                    {% else %}
                     <div title="Regenerate Report" class="regenerate-report">
                         <i class="fa fa-refresh"></i> Regenerate Report
                     </div>
-                    {% endif %}
+                </td>
+                <td>
+                    <div title="Export Report" class="export-report {% if not report.results %}disabled{% endif %}">
+                        <i class="fa fa-download"></i> Export Report
+                    </div>
                 </td>
             </tr>
             {% endfor %}

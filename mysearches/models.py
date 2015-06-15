@@ -519,7 +519,9 @@ class PartnerSavedSearch(SavedSearch):
     unsubscribed = models.BooleanField(default=False)
     tags = models.ManyToManyField('mypartners.Tag', null=True)
     created_by = models.ForeignKey(User, editable=False,
-                                   related_name='created_by')
+                                   related_name='created_by',
+                                   on_delete=models.SET_NULL,
+                                   null=True)
     unsubscriber = models.EmailField(max_length=255, blank=True, editable=False,
                                      verbose_name='Unsubscriber')
 

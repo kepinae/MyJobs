@@ -1,0 +1,559 @@
+.topbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1000;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.topbar fieldset{
+    margin-bottom: 0;
+}
+
+.topbar h3{
+    height: 1em;
+    margin: 0;
+    line-height: 1em;
+    font-size: 24.5px;
+}
+
+.topbar h3 a {
+    height: 26px;
+    padding: 4px 0 0 0;
+}
+
+.topbar-inner {
+    background-color: #444;
+    background-image: none;
+    height: 30px;
+    padding: 0;
+    webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25),inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25),inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25),inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.topbar #topbar-logo {
+    width: 100px;
+    background: transparent url(//d2e48ltfsb5exy.cloudfront.net/myjobs/logos/myjobs_logo_white_small.png) center left no-repeat;
+    text-indent: -9000px;
+}
+
+.topbar .menu-tabs a,
+.topbar #last-microsite-name {
+    border: 1px solid transparent !important;
+    background-color: transparent;
+    color: #FFF;
+    font-weight: bold;
+    text-decoration: none;
+    padding-top: 4px !important;
+    padding-bottom: 5px !important;
+}
+
+#anchor-logo {
+    float: left;
+    padding: 0 0 5px 0;
+}
+
+#anchor-logo:after {
+    clear: left;
+}
+
+#anchor-logo.active {
+    background-color: #a95051;
+}
+
+.topbar #last-microsite-name {
+    margin-left: 10px;
+}
+
+.de-topbar-item {
+    display: inline-block;
+    float: left;
+}
+
+.wrapper{
+    margin: 0 auto;
+    width: 960px;
+    display: block;
+    position: relative;
+}
+
+.menu-container {
+    float: right;
+    width: auto;
+}
+
+.menu-container > ul,
+.menu-container > a {
+    float: left;
+}
+
+.menu-container > div {
+    float: left;
+}
+
+.menu-container > ul {
+    margin: 0;
+    color: #FFF;
+    font-weight: bold;
+}
+
+.menu-container > ul > li {
+    display: inline;
+    position: relative;
+    float: left;
+    padding: 5px 0;
+}
+
+.menu-container > ul > li > a {
+    padding: 7px 15px;
+    text-decoration: none;
+    color: #FFF;
+    display: inline;
+}
+
+.menu-container > ul > li.has-drop > a:after {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #FFF;
+    content: "";
+    margin-top: 8px;
+    margin-left: 3px;
+    position: absolute;
+}
+
+ul.submenu > li.submenu-dropdown > a:after {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #FFF;
+    content: "";
+    margin-top: 8px;
+    margin-left: 3px;
+}
+
+.menu-container > ul > li.has-drop:hover > a:after {
+    border:0;
+}
+
+.menu-container > ul > li:hover > a {
+    cursor: pointer;
+    background-color: #a95051;
+    text-decoration: none;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+}
+
+.menu-container > ul > li > ul {
+    display: none;
+    background-color: #666;
+    color: #FFF;
+    position: absolute;
+    top: 29px;
+    right: 0;
+    width: 250px;
+}
+
+.menu-container > ul > li:last-of-type > ul {
+    right: 0;
+}
+
+.menu-container > ul > li:hover > ul {
+    display: list-item;
+}
+
+.submenu > li {
+    width: 100%;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    box-sizing: border-box;
+    font-weight: normal;
+}
+
+.submenu > li + li {
+    border-top: 0;
+}
+
+div.menu-container ul.submenu > li > a {
+    text-decoration: none;
+    color: white;
+    padding: 4px;
+    display: block;
+    margin-top: 0;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+}
+
+ul.submenu > li > a:hover {
+    background-color: #444;
+    cursor: pointer;
+}
+
+.topbar ul {
+    list-style: none;
+}
+
+#nav .main-nav img {
+    max-width: none;
+    padding-left: 5px;
+}
+
+.arrow-left {
+    float: left;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 15px 20px 15px 0;
+    border-color: transparent #FFF transparent transparent;
+}
+
+.topbar #last-microsite .arrow {
+    position: absolute;
+    float: left;
+    margin-left: 2px;
+    border: 4px solid transparent;
+    border-right: 0;
+    border-left: 6px solid #fff;
+    margin-top: -15px;
+    display: block;
+}
+
+.topbar #last-microsite {
+    margin-top: 6px;
+}
+
+#pop-menu li {
+    margin: 0;
+    padding: 0;
+    color: #FFF;
+}
+
+#pop-menu a {
+    display: block;
+    padding: 4px;
+    background: #666;
+    border-top: 1px solid #333;
+    text-decoration: none;
+}
+
+#pop-menu a.no-show {
+    display: none;
+}
+
+#nav.active li ul#pop-menu {
+    display: block;
+    text-align: left;
+}
+
+#logged-in-li {
+    padding: 4px !important;
+}
+
+#back-btn {
+    border-right: 1px solid #FFF !important;
+    height: 100% !important;
+}
+
+#back-btn-li {
+    float: left;
+    width: 40px !important;
+    height: 100%;
+    z-index: 999;
+}
+
+.sub-nav-item {
+    margin-left: 40px;
+}
+
+#pop-menu .desktop_hide {
+    display: none;
+}
+
+.submenu-dropdown {
+    background-color: #444;
+}
+
+.submenu-dropdown > a:after {
+    float: right;
+    display: block;
+    width: 0;
+    border: 4px solid transparent;
+    border-left: 6px solid #999;
+    border-right: 0;
+}
+
+.submenu-dropdown > ul {
+    display: none;
+    margin: 0;
+}
+
+.submenu-dropdown ul li {
+    padding: 0 10px 0 10px;
+}
+
+.submenu-dropdown ul li a,
+.submenu-dropdown ul li a:hover {
+    color: #fff;
+    text-decoration: none;
+    margin-top: 0;
+    padding: 0;
+}
+
+.submenu-dropdown ul li a:hover {
+    background-color: #222;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+}
+
+.submenu-dropdown ul li:hover {
+    background-color: #222;
+}
+
+#nav.active ul#pop-menu li a:hover,
+#nav li:hover ul#pop-menu li a:hover {
+    background:#444;
+    color: #fff;
+    text-decoration:none;
+}
+
+.no-show {
+    display: none;
+}
+
+#nav ul#pop-menu {
+    background:#444;
+    padding: 0;
+    margin: 2px 0 0 -2px;
+    position:absolute;
+    display: none;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    width: 275px;
+}
+
+#nav a {
+    color: #fff;
+}
+
+#nav > li {
+    padding: 5px 2px 3px 2px;
+}
+
+.menu-container > .desktop_hide {
+    display: none;
+}
+
+@media screen and (max-width: 992px) {
+    .wrapper {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .menu-container > .mobile_hide {
+        display: none;
+    }
+
+    .menu-container > .desktop_hide {
+        display: block;
+    }
+
+    #logo-block {
+        margin-top: 10px;
+    }
+
+    .topbar #last-microsite-name {
+        display: block;
+        margin-top: 2px;
+    }
+
+    .topbar #nav .arrow {
+        display: none;
+    }
+
+    .topbar .gravatar-blank,
+    .topbar #nav img {
+        display: none;
+    }
+
+    #topbar-back {
+        position: absolute;
+        right: 70px;
+        top: 10px;
+        padding: 13px;
+        background-color: #a95051;
+        border: 2px solid #FFF;
+        border-radius: 5px;
+    }
+
+    #topbar-back #prm-arrow-left{
+        width: 0;
+        height: 0;
+        border-bottom: 10px solid transparent;
+        border-top: 10px solid transparent;
+        border-right: 15px solid #2f2f2f;
+        font-size: 0;
+        line-height: 0;
+        display: block;
+    }
+
+    #employer-tools:after,
+    #settings-link:after,
+    #mobile-company-select > a:after{
+        border-bottom: 10px solid transparent;
+        border-left: 15px solid #FFF;
+        border-top: 10px solid transparent;
+        content: "";
+        display: inline-block;
+        float: right;
+        font-size: 0;
+        line-height: 0;
+        margin-bottom: -2px;
+    }
+
+    #topbar-back > #prm-arrow-left {
+        border-right: 15px solid #FFF;
+    }
+
+    #nav .main-nav {
+        background: #a95051 url(//d2e48ltfsb5exy.cloudfront.net/content_mj/files/images/superbutton.png) no-repeat;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        width: 45px;
+        height: 45px;
+        padding: 0;
+        text-indent: -9000px;
+        z-index: 101;
+        border: 2px solid #FFF;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .topbar li a {
+        border-width: 1px;
+        border-style: solid;
+    }
+
+    .topbar-inner {
+        background: #444;
+        height: 50px;
+        border-bottom: 20px solid #a95051;
+    }
+
+    #topbar-login form {
+        display: none;
+    }
+
+    .section #nav {
+        display: none;
+    }
+
+    #topbar-login #nav.active + form,
+    #topbar-login #nav:hover + form {
+        background:#444;
+        padding: 10px 0 10px 0;
+        margin: 3px 0 0 0;
+        position:absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        width: 100%;
+    }
+
+    .topbar #topbar-login input {
+        height: 30px;
+     }
+
+    .topbar #topbar-login button {
+        margin-right: 70px;
+        padding: 10px 25px 9px 25px;
+    }
+
+    .topbar #nav ul#pop-menu {
+        border-top: 20px solid #a95051;
+        position: fixed;
+        left: 0;
+        width: 100%;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+        margin: 0 -10px 0 0;
+    }
+
+    .topbar #nav ul#pop-menu li {
+        display: block;
+        margin: 0;
+        width: 100%;
+    }
+
+    .topbar #nav ul#pop-menu li.no-show {
+        display: none;
+    }
+
+    .topbar #nav ul#pop-menu li a {
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        font-size: 2em;
+        height: 25px;
+        padding: 10px;
+    }
+
+    #pop-menu {
+        height: 100%;
+    }
+
+    #pop-menu .desktop_hide {
+        display: block;
+    }
+
+    .topbar #last-microsite .arrow {
+        margin-top: -19px;
+    }
+}
+
+@media screen and (min-width: 993px) {
+    #nav ul#pop-menu {
+        right: 0;
+    }
+
+    #profile-link,
+    #savedsearch-link,
+    #candidate-link,
+    #partner-link,
+    #settings-link {
+        display: none !important;
+    }
+
+    #account-link, #logout-link {
+        display: block;
+    }
+
+    .topbar ul {
+        position: relative;
+    }
+
+    #nav li:hover ul#pop-menu {
+        display: block;
+        text-align: left;
+    }
+}
+
+#menu-inbox ~ ul li > p {
+    color: white;
+    padding-left: 4px;
+}
+
+#menu-inbox > div.icon-envelope {
+    margin-left: 3px;
+}
+
+.icon-white {
+    background-image: url("//d2e48ltfsb5exy.cloudfront.net/content_mj/files/images/glyphicons-halflings-white.png");
+}

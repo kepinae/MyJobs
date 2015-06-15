@@ -2,11 +2,12 @@
     <h2 class="top">Past Reports</h2>
     {% for report in past_reports %}
         <div class="report" data-report="{{ report.id }}" data-model="{{ report.model }}">
-            <a>{{ report.name }}</a>
+            <a class="report-link {% if not report.results %}disabled{% endif %}" title="View Report">{{ report.name }}</a>
             <div class="icon-set">
-                <i id="view-{{ report.id }}" class="fa fa-eye" title="View"></i>
+                <i id="view-{{ report.id }}" class="fa fa-eye {% if not report.results %}disabled{% endif %}" title="View Report"></i>
                 <i id="clone-{{ report.id }}" class="fa fa-copy" title="Clone Report"></i>
-                <i id="export-{{ report.id }}" class="fa {% if report.results %}fa-download{% else %}fa-refresh{% endif %}" title="{% if report.results %}Export Report{% else %}Regenerate Report{% endif %}"></i>
+                <i id="regen-{{ report.id }}" class="fa fa-refresh" title="Regenerate Report"></i>
+                <i id="export-{{ report.id }}" class="fa fa-download {% if not report.results %}disabled{% endif %}" title="Export Report"></i>
             </div>
         </div>
     {% empty %}

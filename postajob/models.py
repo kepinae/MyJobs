@@ -271,6 +271,19 @@ class PurchasedJob(Job):
     purchased_product = models.ForeignKey('PurchasedProduct')
     is_approved = models.BooleanField(default=False)
 
+    def context(self):
+        """
+        Creates a set of reasonably-unique key:value pairs that can be used
+        as template variables in email templates.
+        """
+        return_context = {
+            'purchasedjob_title': self.title,
+            'purchasedjob_owner': self.owner,
+            'purchasedjob_reqid': self.reqid
+        }
+        return_context.update(self.purchased_product.context())
+        return return_context
+
     def save(self, **kwargs):
         if not hasattr(self, 'pk') or not self.pk:
             # Set number of jobs remaining
@@ -404,6 +417,15 @@ class Package(models.Model):
         name = "{content_type} - {name}"
         return name.format(content_type=self.content_type.name.title(),
                            name=self.name)
+
+    def context(self):
+        """
+        Creates a set of reasonably-unique key:value pairs that can be used
+        as template variables in email templates.
+        """
+        return {
+            'site_packages': self.sitepackage.sites.all()
+        }
 
     def save(self, *args, **kwargs):
         if not hasattr(self, 'content_type') or not self.content_type:
@@ -540,6 +562,24 @@ class PurchasedProduct(BaseModel):
 
     def __unicode__(self):
         return self.product.name
+
+    def context(self):
+        """
+        Creates a set of reasonably-unique key:value pairs that can be used
+        as template variables in email templates.
+        """
+        return_context = {
+            'purchasedproduct_purchase_date': self.purchase_date,
+            'purchasedproduct_purchase_amount': self.purchase_amount,
+            'purchasedproduct_expiration_date': self.expiration_date,
+            'purchasedproduct_num_jobs_allowed': self.num_jobs_allowed,
+            'purchasedproduct_max_job_length': self.max_job_length,
+            'purchasedproduct_jobs_remaining': self.jobs_remaining
+        }
+
+        return_context.update(self.invoice.context())
+        return_context.update(self.product.context())
+        return return_context
 
     def save(self, **kwargs):
         self.num_jobs_allowed = self.product.num_jobs_allowed
@@ -698,6 +738,18 @@ class Product(BaseModel):
         else:
             return '%s-day job posting - $%s' % (self.posting_window_length,
                                                  self.cost)
+
+    def context(self):
+        """
+        Creates a set of reasonably-unique key:value pairs that can be used
+        as template variables in email templates.
+        """
+        return_context = {
+            'product_name': self.name,
+            'product_description': self.description,
+        }
+        return_context.update(self.package.context())
+        return return_context
 
     def expiration_date(self):
         return date.today() + timedelta(self.posting_window_length)
@@ -957,6 +1009,22 @@ class Invoice(BaseModel):
 
     # Owner is the Company that owns the Products.
     owner = models.ForeignKey('seo.Company', related_name='owner')
+
+    def context(self):
+        """
+        Creates a set of reasonably-unique key:value pairs that can be used
+        as template variables in email templates.
+        """
+        return {
+            'card_exp_date': self.card_exp_date,
+            'card_last_four': self.card_last_four,
+            'billing_address_line_one': self.address_line_one,
+            'billing_address_line_two': self.address_line_two,
+            'billing_city': self.city,
+            'billing_state': self.state,
+            'billing_country': self.country,
+            'billing_zipcode': self.zipcode
+        }
 
     def send_invoice_email(self, send_to_admins=True, other_recipients=None):
         """

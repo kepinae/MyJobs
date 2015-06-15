@@ -281,8 +281,8 @@ def process_batch_events():
     # These users have not responded in a month. Send them an email if they
     # own any saved searches
     inactive = User.objects.select_related('savedsearch_set')
-    inactive = inactive.filter(Q(last_response=now-timedelta(days=82)) |
-                               Q(last_response=now-timedelta(days=89)))
+    inactive = inactive.filter(Q(last_response=now-timedelta(days=172)) |
+                               Q(last_response=now-timedelta(days=179)))
 
     category = '{"category": "User Inactivity (%s)"}'
     for user in inactive:
@@ -298,7 +298,7 @@ def process_batch_events():
                             headers=headers)
 
     # These users have not responded in 90 days. Stop sending emails.
-    users = User.objects.filter(last_response__lte=now-timedelta(days=90))
+    users = User.objects.filter(last_response__lte=now-timedelta(days=180))
     users.update(opt_in_myjobs=False)
 
 
@@ -861,6 +861,7 @@ def event_list_to_email_log(event_list):
 
     return events_to_create
 
+
 @task(name="tasks.process_sendgrid_event", ignore_result=True)
 def process_sendgrid_event(events):
     """
@@ -874,3 +875,20 @@ def process_sendgrid_event(events):
     event_list = get_event_list(events)
     events_to_create = event_list_to_email_log(event_list)
     EmailLog.objects.bulk_create(events_to_create)
+
+
+@task(name="tasks.send_event_email", ignore_result=True)
+def send_event_email(email_task):
+    """
+    Send an appropriate email given an EmailTask instance.
+
+    Inputs:
+    :email_task: EmailTask we are using to generate this email
+    """
+    email_task.task_id = send_event_email.request.id
+    email_task.save()
+
+    email_task.send_email()
+
+    email_task.completed_on = datetime.now()
+    email_task.save()

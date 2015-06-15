@@ -80,7 +80,7 @@ def get_states(request):
 
 
 @company_has_access('prm_access')
-def view_records(request, app="myparters", model="contactrecord"):
+def view_records(request, app="mypartners", model="contactrecord"):
     """
     Returns records as JSON.
 
@@ -166,9 +166,9 @@ class ReportView(View):
 
         report_id = request.GET.get('id', 0)
         report = Report.objects.get(id=report_id)
-        records = report.queryset
 
         if report.model == "contactrecord":
+            records = report.queryset
             ctx = json.dumps({
                 'emails': records.emails,
                 'calls': records.calls,
@@ -180,11 +180,17 @@ class ReportView(View):
                 'communications': records.communication_activity.count(),
                 'referrals': records.referrals,
                 'contacts': list(records.contacts)})
-        else:
+            status = 200
+        elif report.results:
             ctx = report.json
+            status = 200
+        else:
+            ctx = "Report %s has no results. Please regenerate." % report.name
+            status = 503
 
         return HttpResponse(
             ctx,
+            status=status,
             content_type='application/json; charset=utf-8')
 
     def post(self, request, app='mypartners', model='contactrecords'):
@@ -279,10 +285,18 @@ def downloads(request):
         report_id = request.GET.get('id', 0)
         report = get_object_or_404(
             get_model('myreports', 'report'), pk=report_id)
-        report.regenerate()
+
+        common_blacklist = ['pk', 'approval_status']
+        blacklist = {
+            'contactrecord': common_blacklist,
+            'contact': common_blacklist + ['archived_on', 'library', 'user'],
+            'partner': common_blacklist + ['library', 'owner']}
+
+        if not report.results:
+            report.regenerate()
 
         fields = sorted([field for field in report.python[0].keys()
-                         if field != 'pk'])
+                         if field not in blacklist[report.model]])
 
         values = json.loads(report.values) or fields
         fields = values + [field for field in fields if field not in values]

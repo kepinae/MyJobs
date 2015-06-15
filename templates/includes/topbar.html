@@ -1,9 +1,15 @@
 {% load i18n %}
 {% load common_tags %}
-<link href="{{ STATIC_URL }}topbar.162-6.css" rel="stylesheet" type="text/css">
+
+{% if request.GET.callback %}
+<link href="{{ STATIC_URL }}topbar.directseo.165-10.css" rel="stylesheet" type="text/css">
+{% else %}
+<link href="{{ STATIC_URL }}topbar.myjobs.165-10.css" rel="stylesheet" type="text/css">
+{% endif %}
+
 <div class="topbar" data-dropdown="dropdown" role="menubar">
     <div class="topbar-inner">
-        <div id="de-topbar-content" class="wrapper" {% if from_ajax %}style="margin:0 auto; width:960px; display:block;"{% endif %}>
+        <div id="de-topbar-content" class="wrapper">
             <div id="logo-block" class="de-topbar-item">
                 <a id="anchor-logo" href="http://www.my.jobs/">
                     <h3 id="topbar-logo">My.jobs</h3>
@@ -23,15 +29,15 @@
             {% endif %}
 
             <div class="menu-container" role="menu">
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and request.session.keys|length %}
                 <ul class="mobile_hide">
                     <li class="has-drop">
                         <a id="menu-inbox">{{ new_messages.count }}<div class="icon-envelope icon-white"></div></a>
                         <ul class="submenu">
-                            <li id="menu-inbox-all"><a href="{% url 'inbox' %}">Inbox (See All)</a></li>
+                            <li id="menu-inbox-all"><a href="{{ ABSOLUTE_URL }}message/inbox">Inbox (See All)</a></li>
                             {% for message in new_messages %}
                                 {% if forloop.counter <= 3 %}
-                                    <li><a href="{{ ABSOLUTE_URL }}{% url 'inbox' %}?message={{ message.message.pk }}">{{ message.message.start_on.date }} - {{ message.message.subject|truncatewords:'10' }}</a></li>
+                                    <li><a href="{{ ABSOLUTE_URL }}message/inbox?message={{ message.message.pk }}">{{ message.message.start_on.date }} - {{ message.message.subject|truncatewords:'10' }}</a></li>
                                 {% endif %}
                             {% empty %}
                                 <li><p>No new unread messages</p></li>
@@ -136,7 +142,7 @@
                                         {% endif %}
                                     {% endif %}
                                     <li><a id="account-link" href="{{ ABSOLUTE_URL }}account/edit">{% trans "Account Settings" %}</a></li>
-                                    <li><a id="menu-inbox-link" href="{{ ABSOLUTE_URL }}{% url 'inbox' %}">{% trans "Messages" %} ({{ new_messages.count }})</a></li>
+                                    <li><a id="menu-inbox-link" href="{{ ABSOLUTE_URL }}message/inbox">{% trans "Messages" %} ({{ new_messages.count }})</a></li>
                                     <li><a id="search-jobs" href="{% get_ms_url %}">{% trans "Search Jobs" %}</a></li>
                                     <li><a id="settings-link" style="cursor: pointer;">{% trans "Settings" %}</a></li>
 

@@ -110,7 +110,7 @@ def serialize(fmt, data, values=None, order_by=None):
     def convert(record, value):
         val = record[value]
         # strip html from strings
-        if isinstance(val, basestring) and val:
+        if isinstance(val, basestring) and val.strip():
             val = html.fromstring(val).text_content()
         # convert datetime to pretty string
         if isinstance(val, datetime):

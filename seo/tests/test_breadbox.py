@@ -100,12 +100,13 @@ class BreadboxTests(DirectSEOBase):
 
     def test_breadcrumbs_from_slugs(self):
         """Tests that breadcrumb URLs aren't mangled on creation from slugs."""
-        path = 'deu/jobs/deutsche-bank/careers/'
+        path = u'deu/jobs/deutsche-bank/careers/'
 
         self.filters['company_slug'] = 'deutsche-bank'
         self.filters['location_slug'] = 'deu'
+        query_dict = QueryDict('')
 
-        breadbox = Breadbox(path, self.filters, [], QueryDict(''))
+        breadbox = Breadbox(path, self.filters, [], query_dict)
         breadbox.build_location_breadcrumbs_from_slugs()
 
         # Before, the resulting URL would become '[tsche-bank/careers/', which
@@ -113,6 +114,11 @@ class BreadboxTests(DirectSEOBase):
         # company name being mangled
         self.assertEqual(breadbox.location_breadcrumbs[0].url,
                          'deutsche-bank/careers/')
+
+        # location slug not being part of the path shouldn't raise an error
+        path = '/jobs/deutsche-bank/careers/'
+        breadbox = Breadbox(path, self.filters, [], query_dict)
+        breadbox.build_location_breadcrumbs_from_slugs()
 
     def test_moc_slug(self):
         moc = MocFactory()

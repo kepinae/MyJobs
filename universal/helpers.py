@@ -23,11 +23,14 @@ def update_url_param(url, param, new_val):
     outputs:
     The new url.
     """
+
     url_parts = list(urlparse(url))
     parts = copy(url_parts)
-    query = dict(parse_qsl(parts[4]))
+    query = {k.encode('utf-8'): v.encode('utf-8')
+             for k, v in parse_qsl(parts[4])}
     query[param] = new_val
     parts[4] = urllib.urlencode(query)
+
     return urlunparse(parts)
 
 
