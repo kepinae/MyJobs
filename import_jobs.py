@@ -620,7 +620,7 @@ def add_jobs(jobs, upload_chunk_size=1024):
     # AT&T Showed that large numbers of MOCs can cause import issues due to the size of documents.
     # Therefore, when processing AT&T lower the document chunk size.
     for job in jobs:
-        if int(job['buid']) == 19389:
+        if int(job.get('buid', 0)) == 19389:
             logger.warn("AT&T has large amounts of mapped_mocs, that cause problems.  Reducing chunk size.")
             upload_chunk_size = 64
             break
