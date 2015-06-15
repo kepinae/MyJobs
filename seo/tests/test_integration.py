@@ -110,7 +110,7 @@ class SiteTestCase(DirectSEOBase):
         resp = self.client.get('/jobs/', HTTP_HOST=self.site.domain,
                                follow=True)
         total_jobs = resp.context['total_jobs_count']
-        solr_jobs = self.conn.search(q=u"title:'Специалист'")
+        solr_jobs = self.conn.search(q=u'title:"Специалист"')
         self.assertEqual(total_jobs, solr_jobs.hits)
         self.assertEqual(len(resp.context['default_jobs']), total_jobs)
         for facet_widget in resp.context['widgets']:
