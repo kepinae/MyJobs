@@ -63,20 +63,17 @@ class SiteFamilyCorsMiddleware(CorsMiddleware):
 
     def process_request(self, request):
         callback = request.GET.get("callback")
-        host = urlparse(request.META.get('HTTP_ORIGIN', request.META.get(
-            'HTTP_REFERER', ''))).hostname
-        if host and host != settings.SITE.domain:
-            if not request.user or not request.user.is_authenticated():
-                ctx = json.dumps({'status': 'not authenticated'})
-                return http.HttpResponse(
-                    ctx, content_type="application/json; charset=utf-8")
+        host = getattr(urlparse(request.META.get(
+            'HTTP_ORIGIN', request.META.get('HTTP_REFERER', ''))), 'hostname')
 
+        if host and host != settings.SITE.domain:
             site = SeoSite.objects.get(domain=host)
             family = SiteTag.objects.filter(
                 is_site_family=True, seosite=site).filter(
                     seosite=settings.SITE)
 
-            if family.exists():
+            if (family.exists() and request.user 
+                                and request.user.is_authenticated()):
                 domains = family.first().seosite_set.values_list(
                     'domain', flat=True)
                 settings.CORS_ORIGIN_WHITELIST = domains
