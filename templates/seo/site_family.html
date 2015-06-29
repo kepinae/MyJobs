@@ -10,9 +10,6 @@
         <div class="row" id="container">
         </div>
         <script>
-            var url = "http://10.10.12.112:8002/reports/ajax/mypartners/partner",
-                crossDomain = true,
-                processData = false;
 
             function fillContainer(data) {
                 if(data.status){
@@ -24,33 +21,25 @@
                 }
             }
 
-            $.ajax({
-                url: url,
-                crossDomain: crossDomain,
-                processData: processData,
-                dataType: "json",
-                success: fillContainer,
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                },
-                xhrFields: {
-                    withCredentials: true
-                },
-                error: function() {
-                    $.ajax({
-                        url: url,
-                        crossDomain: crossDomain,
-                        processData: processData,
-                        dataType: "jsonp",
-                        jsonpCallback: 'fillContainer',
-                        headers: {
-                            "Content-Type": 'application/json',
-                            Accept: 'text/javascript'
-                        },
-                    });
-                }
-            });
+            corsEnabled = XMLHttpRequest && "withCredentials" in XMLHttpRequest;
 
+            $.ajax({
+                url: "http://10.10.12.112:8002/reports/ajax/mypartners/partner",
+                crossDomain: true,
+                processData: false;
+                dataType: corsEnabled ? "json" : "jsonp",
+                success: corsEnabled ? fillContainer : void 0,
+                jsonpCallback: corsEnabled ? void 0 : 'fillContainer',
+                headers: corsEnabled ? {
+                    "X-Requested-With": "XMLHttpRequest"
+                } : {
+                    "Content-Type": 'application/json',
+                    Accept: 'text/javascript'
+                },
+                xhrFields: corsEnabled ? {
+                    withCredentials: true
+                } : void 0,
+            });
         </script>
     </body>
 
