@@ -24,7 +24,7 @@
             corsEnabled = XMLHttpRequest && "withCredentials" in XMLHttpRequest;
 
             $.ajax({
-                url: "http://10.10.12.112:8002/reports/ajax/mypartners/partner",
+                url: "{{ ABSOLUTE_PATH }}reports/ajax/mypartners/partner",
                 crossDomain: true,
                 processData: false;
                 dataType: corsEnabled ? "json" : "jsonp",
