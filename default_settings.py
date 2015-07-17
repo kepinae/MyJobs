@@ -262,7 +262,7 @@ INSTALLED_APPS = (
     'djcelery',
     'django_jenkins',
     'widget_tweaks',
-    'south',
+    #'south',
     'django_nose',
     'tastypie',
     'captcha',
@@ -483,11 +483,11 @@ CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
 
 # South
-SOUTH_TESTS_MIGRATE = False
-SKIP_SOUTH_TESTS = True
-SOUTH_MIGRATION_MODULES = {
-    'taggit': 'taggit.south_migrations',
-}
+#SOUTH_TESTS_MIGRATE = False
+#SKIP_SOUTH_TESTS = True
+#SOUTH_MIGRATION_MODULES = {
+#    'taggit': 'taggit.south_migrations',
+#}
 
 
 # Default haystack settings. Should be overwritten by settings.py.
