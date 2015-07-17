@@ -73,7 +73,7 @@ STATICFILES_FINDERS = (
 ADMIN_MEDIA_PREFIX = '//d2e48ltfsb5exy.cloudfront.net/myjobs/admin/'
 
 TEMPLATE_DIRS = (
-    join(ROOT_PATH, 'templates')
+    join(ROOT_PATH, 'templates'),
 )
 
 TEMPLATE_LOADERS = (
