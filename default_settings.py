@@ -73,7 +73,7 @@ STATICFILES_FINDERS = (
 ADMIN_MEDIA_PREFIX = '//d2e48ltfsb5exy.cloudfront.net/myjobs/admin/'
 
 TEMPLATE_DIRS = (
-    join(ROOT_PATH, 'templates')
+    join(ROOT_PATH, 'templates'),
 )
 
 TEMPLATE_LOADERS = (
@@ -134,9 +134,9 @@ CELERY_QUEUES = {
     'sendgrid': {
         'binding_key': 'sendgrid.#'
     },
-    'myemails': {
-        'binding_key': 'myemails.#'
-    }
+    #'myemails': {
+    #    'binding_key': 'myemails.#'
+    #}
 }
 CELERY_ROUTES = {
     'tasks.task_update_solr': {
@@ -188,10 +188,10 @@ CELERY_ROUTES = {
         'queue': 'myjobs',
         'routing_key': 'dseo.submit_all_sitemaps'
     },
-    'tasks.send_event_email': {
-        'queue': 'myemails',
-        'routing_key': 'myemails.send_event_emails'
-    },
+    #'tasks.send_event_email': {
+    #    'queue': 'myemails',
+    #    'routing_key': 'myemails.send_event_emails'
+    #},
     'tasks.process_sendgrid_event': {
         'queue': 'sendgrid',
         'routing_key': 'sendgrid.process_sendgrid_event',
@@ -285,8 +285,8 @@ CAPTCHA_AJAX = True
 PROJECT_APPS = ('myjobs', 'myprofile', 'mysearches', 'registration',
                 'mydashboard', 'mysignon', 'mymessages', 'mypartners',
                 'solr', 'postajob', 'moc_coding', 'seo', 'social_links',
-                'wildcard', 'myblocks', 'myemails', 'myreports', 'redirect',
-                'automation')
+                'wildcard', 'myblocks', #'myemails', 
+                'myreports', 'redirect', 'automation')
 
 INSTALLED_APPS += PROJECT_APPS
 
