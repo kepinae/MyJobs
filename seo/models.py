@@ -864,7 +864,7 @@ class ViewSource(models.Model):
     Defines a source code to override the default provided by the job source
     """
     name = models.CharField(max_length=200, default='')
-    view_source = models.IntegerField(max_length=20, default='')
+    view_source = models.IntegerField(max_length=20, null=True)
 
     def __unicode__(self):
         return "%s (%s)" % (self.name, self.view_source)
