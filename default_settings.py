@@ -419,13 +419,6 @@ BOTS = ['agent', 'archive', 'ask', 'auto', 'bot', 'check', 'crawl',
 PROTECTED_SITES = {42751: [25803, ]}
 
 
-FIXTURE_DIRS = (
-    # the 'syncdb' command will check each of these directories for
-    # a file named 'initial_data[.json | .xml]' and load it into the DB
-    './deploy/',
-)
-
-
 # Default site settings
 SITE_ID = 1
 SITE_NAME = ""

@@ -17,10 +17,6 @@ def create_initial_data(apps, schema_editor):
 
     Group.objects.bulk_create(groups)
 
-    # create initial site
-    Site = apps.get_model('sites', 'site')
-    Site.objects.create(name='Default', domain='www.my.jobs')
-
     #create initial configurations
     Configuration = apps.get_model('seo', 'configuration')
     configurations = [
@@ -108,7 +104,8 @@ def create_initial_data(apps, schema_editor):
 
     # create initial seosite
     SeoSite = apps.get_model('seo', 'seosite')
-    seosite = SeoSite.objects.create(group=groups[-1])
+    seosite = SeoSite.objects.create(
+        name='Default', domain='www.my.jobs', group=groups[-1])
     seosite.configurations.add(*configurations)
 
     # create initial social links
@@ -146,6 +143,32 @@ def create_initial_data(apps, schema_editor):
     SocialLink.objects.bulk_create(social_links)
 
 
+def delete_initial_data(apps, schema_editor):
+    # delete initial groups
+    Group = apps.get_model('auth', 'group')
+    Group.objects.filter(
+        name__in=['Job Seeker', 'Employer', 'Partner', 'Staff', 
+                  'SEO Test Group']).delete()
+
+    # delete initial configurations
+    Configuration = apps.get_model('seo', 'configuration')
+    Configuration.objects.filter(pk__in=[1, 2]).delete()
+
+    # delete initial seo site
+    SeoSite = apps.get_model('seo', 'seosite')
+    SeoSite.objects.filter(pk=1).delete()
+
+    # delete initial content type
+    ContentType = apps.get_model('contenttypes', 'contenttype')
+    ContentType.objects.filter(pk=1).delete()
+
+    # delete initial social links
+    SocialLink = apps.get_model('social_links', 'sociallink')
+    SocialLink.objects.filter(pk__in=[1, 2, 3]).delete()
+
+
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -154,5 +177,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_initial_data),
+        migrations.RunPython(create_initial_data, delete_initial_data),
     ]

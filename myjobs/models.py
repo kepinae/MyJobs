@@ -308,8 +308,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __unicode__(self):
         return self.email
 
-    natural_key = __unicode__
-
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         # TODO: Fix PartnerSavedSearch-User relationship.
