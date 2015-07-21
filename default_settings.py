@@ -282,11 +282,27 @@ CAPTCHA_AJAX = True
 
 # Add all MyJobs apps here. This separation ensures that automated Jenkins tests
 # only run on these apps
-PROJECT_APPS = ('myjobs', 'myprofile', 'mysearches', 'registration',
-                'mydashboard', 'mysignon', 'mymessages', 'mypartners',
-                'solr', 'postajob', 'moc_coding', 'seo', 'social_links',
-                'wildcard', 'myblocks', 'myemails', 
-                'myreports', 'redirect', 'automation')
+PROJECT_APPS = (
+    'myjobs',
+    'myprofile',
+    'mysearches',
+    'registration',
+    'mydashboard',
+    'mysignon',
+    'mymessages',
+    'mypartners',
+    'solr',
+    'postajob',
+    'moc_coding',
+    'seo',
+    'social_links',
+    'wildcard',
+    'myblocks',
+    'myemails',
+    'myreports',
+    'redirect',
+    'automation'
+)
 
 INSTALLED_APPS += PROJECT_APPS
 
@@ -419,6 +435,14 @@ BOTS = ['agent', 'archive', 'ask', 'auto', 'bot', 'check', 'crawl',
 PROTECTED_SITES = {42751: [25803, ]}
 
 
+FIXTURE_DIRS = (
+    # the 'syncdb' command will check each of these directories for
+    # a file named 'initial_data[.json | .xml]' and load it into the DB
+    './deploy/',
+)
+
+
+
 # Default site settings
 SITE_ID = 1
 SITE_NAME = ""
@@ -464,8 +488,8 @@ FEED_VIEW_SOURCES = {
 HAYSTACK_LIMIT_TO_REGISTERED_MODELS = False
 FACET_RULE_DELIMITER = '#@#'
 TEST_SOLR_INSTANCE = {
-    'all': 'http://127.0.0.1:8983/solr/myjobs_test/',
-    'current': 'http://127.0.0.1:8983/solr/myjobs_test_current/'
+    'all': 'http://127.0.0.1:8983/solr/seo_test/',
+    'current': 'http://127.0.0.1:8983/solr/seo_test/'
 }
 
 

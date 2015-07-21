@@ -351,6 +351,7 @@ def update_solr_task(solr_location=None):
             updates.append(profileunits_to_dict(key))
 
     updates = split_list(updates, 1000)
+    import ipdb; ipdb.set_trace()
     for location in solr_location.values():
         solr = pysolr.Solr(location)
         for update_subset in updates:
