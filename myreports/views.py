@@ -10,7 +10,7 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 
-from myreports.helpers import humanize, parse_params, serialize
+from myreports.helpers import parse_params, serialize
 from myreports.models import Report
 from postajob import location_data
 from universal.helpers import get_company_or_404
@@ -355,7 +355,7 @@ def download_report(request):
         report.values = json.dumps(values)
         report.save()
 
-    records = humanize(report.python)
+    records = report.python
 
     response = HttpResponse(content_type='text/csv')
     content_disposition = "attachment; filename=%s-%s.csv"

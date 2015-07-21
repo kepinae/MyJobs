@@ -114,18 +114,6 @@ class TestHelpers(MyReportsTestCase):
 
         self.assertEqual(len(list(reader)) - 1, self.records.count())
 
-    def test_humanize(self):
-        """Test that fields get converted to human-readable equivalents."""
-
-        data = helpers.humanize(helpers.serialize('python', self.records))
-
-        for record in data:
-            # ensure tags were converted
-            self.assertEqual(record['tags'], 'test, stuff, working')
-
-            # ensure contact type was converted
-            self.assertTrue(record['contact_type'] == 'Email')
-
     def test_parse_params(self):
         """Test that params are properly parsed from a `QueryDict`."""
 

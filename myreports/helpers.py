@@ -12,53 +12,6 @@ from lxml import html
 from mypartners.models import CONTACT_TYPES
 
 
-# TODO:
-# * allow other models to be humanized, maybe generalize the things being
-# * humanized and create a Humanize object?
-def humanize(records):
-    """
-    Converts values in a dict to their human-readable counterparts. At the
-    moment, this means converting tag ids to a list of tag names, and
-    converting contact types. As such, this is specifically only useful for
-    contact records.
-
-    Inputs:
-        :records: `dict` of records to be humanized
-
-    Outputs:
-        The humanized records.
-    """
-
-    parser = HTMLParser.HTMLParser()
-
-    for record in records:
-        for key, value in record.items():
-            if value is None:
-                record[key] = ''
-
-        # make tag lists look pretty
-        if 'tags' in record:
-            record['tags'] = ', '.join(record['tags'])
-        # make locations look pretty
-        if 'locations' in record:
-            record['locations'] = '; '.join(record['locations'])
-        # human readable contact types
-        if 'contact_type' in record:
-            record['contact_type'] = CONTACT_TYPES[record['contact_type']]
-        # strip html and extra whitespace from notes
-        if 'notes' in record:
-            # TODO: Find a faster way to do this
-            record['notes'] = parser.unescape('\n'.join(
-                ' '.join(line.split())
-                for line in record['notes'].split('\n') if line))
-            # second pass to take care of extra new lines
-            record['notes'] = '\n'.join(
-                filter(bool, record['notes'].split('\n\n')))
-
-
-    return records
-
-
 def parse_params(querydict):
     """
     Parses a `QueryDict` into a regular dict, discarding falsey values and

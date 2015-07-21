@@ -602,3 +602,6 @@ COMPRESS_CSS_HASHING_METHOD = 'hash'
 COMPRESS_OFFLINE = True
 
 COMPRESS_ENABLED = False
+
+# only needed for django 1.7, as the offending warning is removed in 1.8
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'

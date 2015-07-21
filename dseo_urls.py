@@ -8,20 +8,6 @@ from seo.views.search_views import (BusinessUnitAdminFilter, SeoSiteAdminFilter,
 from seo.views.settings_views import secure_redirect
 from registration import views as registration_views
 
-# This is a bit of code pulled from a Django TRAC ticket describing a problem
-# I was seeing when working with the inline model forms:
-# https://code.djangoproject.com/ticket/10405#comment:11
-
-# Without this, on pages that aren't serving job-related content, e.g. sitemap,
-# stylesheet, etc. pages, we'd see an error like:
-# AttributeError: 'str' object has no attribute '_default_manager'
-
-# The Trac ticket linked above recommended including this bit of code, and also
-# included a comprehensive explanation. When/if this particular issue gets
-# resolved we can safely remove this conditional.
-if not model_cache.loaded:
-    model_cache.get_models()
-
 from tastypie.api import Api
 from seo.api.resources import *
 

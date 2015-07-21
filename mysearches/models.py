@@ -604,7 +604,7 @@ class PartnerSavedSearch(SavedSearch):
 
 
 class SavedSearchLog(models.Model):
-    was_sent = models.BooleanField()
+    was_sent = models.BooleanField(default=False)
     was_received = models.BooleanField(default=False,
                                        help_text=("If date_sent is very "
                                        "recent and was_received is unchecked, "
