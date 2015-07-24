@@ -54,6 +54,7 @@ class SocialLinkForm(ModelForm):
     
     class Meta:
         model = SocialLink
+        fields = '__all__'
 
 
 class SocialLinkAdmin(admin.ModelAdmin):
@@ -160,6 +161,7 @@ class MicrositeCarouselForm(ModelForm):
     
     class Meta:
         model = MicrositeCarousel
+        fields = '__all__'
 
 class MicrositeCarouselAdmin(admin.ModelAdmin):
     form = MicrositeCarouselForm

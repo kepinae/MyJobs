@@ -159,8 +159,7 @@ class CustomFacet(BaseSavedSearch):
 
     """
     group = models.ForeignKey(Group, blank=True, null=True)
-    business_units = models.ManyToManyField('BusinessUnit', blank=True,
-                                            null=True)
+    business_units = models.ManyToManyField('BusinessUnit', blank=True)
     country = models.CharField(max_length=800, null=True, blank=True)
     state = models.CharField(max_length=800, null=True, blank=True)
     city = models.CharField(max_length=800, null=True, blank=True)
@@ -455,20 +454,19 @@ class SeoSite(Site):
                                      postajob_filter_options_dict.keys()])
 
     group = models.ForeignKey('auth.Group', null=True)
-    facets = models.ManyToManyField('CustomFacet', null=True, blank=True,
+    facets = models.ManyToManyField('CustomFacet', blank=True,
                                     through='SeoSiteFacet')
     configurations = models.ManyToManyField('Configuration', blank=True)
-    google_analytics = models.ManyToManyField('GoogleAnalytics', null=True,
+    google_analytics = models.ManyToManyField('GoogleAnalytics',
                                               blank=True)
-    business_units = models.ManyToManyField('BusinessUnit', null=True,
+    business_units = models.ManyToManyField('BusinessUnit',
                                             blank=True)
-    featured_companies = models.ManyToManyField('Company', null=True,
+    featured_companies = models.ManyToManyField('Company',
                                                 blank=True)
     microsite_carousel = models.ForeignKey('social_links.MicrositeCarousel',
                                            null=True, blank=True,
                                            on_delete=models.SET_NULL)
-    billboard_images = models.ManyToManyField('BillboardImage', blank=True,
-                                              null=True)
+    billboard_images = models.ManyToManyField('BillboardImage', blank=True)
     site_title = models.CharField('Site Title', max_length=200, blank=True,
                                   default='')
     site_heading = models.CharField('Site Heading', max_length=200, blank=True,
@@ -478,11 +476,11 @@ class SeoSite(Site):
     google_analytics_campaigns = models.ForeignKey('GoogleAnalyticsCampaign',
                                                    null=True, blank=True)
     view_sources = models.ForeignKey('ViewSource', null=True, blank=True)
-    ats_source_codes = models.ManyToManyField('ATSSourceCode', null=True,
+    ats_source_codes = models.ManyToManyField('ATSSourceCode',
                                               blank=True)
     special_commitments = models.ManyToManyField('SpecialCommitment',
-                                                 blank=True, null=True)
-    site_tags = models.ManyToManyField('SiteTag', blank=True, null=True)
+                                                 blank=True)
+    site_tags = models.ManyToManyField('SiteTag', blank=True)
 
     # The "designated" site package specific to this seosite.
     # This site should be the only site attached to site_package.
@@ -712,7 +710,7 @@ class Company(models.Model):
     site_package = models.ForeignKey('postajob.SitePackage', null=True,
                                      on_delete=models.SET_NULL)
 
-    prm_saved_search_sites = models.ManyToManyField('SeoSite', null=True,
+    prm_saved_search_sites = models.ManyToManyField('SeoSite',
                                                     blank=True)
 
     # Permissions
@@ -864,7 +862,7 @@ class ViewSource(models.Model):
     Defines a source code to override the default provided by the job source
     """
     name = models.CharField(max_length=200, default='')
-    view_source = models.IntegerField(max_length=20, default='')
+    view_source = models.IntegerField(null=True)
 
     def __unicode__(self):
         return "%s (%s)" % (self.name, self.view_source)
@@ -1260,8 +1258,7 @@ class BusinessUnit(models.Model):
         return ", ".join(self.seosite_set.all().values_list("domain",
                                                             flat=True))
 
-    id = models.IntegerField('Business Unit Id', max_length=10,
-                             primary_key=True)
+    id = models.IntegerField('Business Unit Id', primary_key=True)
     title = models.CharField(max_length=500, null=True, blank=True)
     title_slug = models.SlugField(max_length=500, null=True, blank=True)
     date_crawled = models.DateTimeField('Date Crawled')
@@ -1276,7 +1273,7 @@ class BusinessUnit(models.Model):
     # Assumes that new business units will have support markdown
     enable_markdown = models.BooleanField('Enable Markdown for job '
                                           'descriptions', default=True)
-    site_packages = models.ManyToManyField('postajob.SitePackage', null=True,
+    site_packages = models.ManyToManyField('postajob.SitePackage',
                                            blank=True)
 
     @staticmethod

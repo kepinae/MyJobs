@@ -137,7 +137,7 @@ class MicrositeCarousel(models.Model):
     # sites to be included as links in the carousel
     link_sites = models.ManyToManyField('seo.SeoSite',
                                         related_name='linked_carousel',
-                                        blank=True, null=True)
+                                        blank=True)
     display_rows = models.IntegerField('Display Rows', choices=[(1,1), (2,2),
                                                                 (3,3), (4,4),
                                                                 (5,5), (6,6),

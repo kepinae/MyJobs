@@ -67,7 +67,7 @@ class ActivationProfile(models.Model):
     user = models.ForeignKey('myjobs.User', verbose_name="user")
     activation_key = models.CharField(_('activation_key'), max_length=40)
     email = models.EmailField(max_length=255)
-    sent = models.DateTimeField(auto_now_add=True, default=datetime_now)
+    sent = models.DateTimeField(auto_now_add=True)
 
     ACTIVATED = "ALREADY ACTIVATED"
     objects = RegistrationManager()

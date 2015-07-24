@@ -144,8 +144,8 @@ class Job(BaseModel):
                                   help_text=help_text['apply_link'])
     apply_info = models.TextField(blank=True, verbose_name="Apply Instructions",
                                   help_text=help_text['apply_info'])
-    site_packages = models.ManyToManyField('SitePackage', blank=True,
-                                           null=True)
+    site_packages = models.ManyToManyField('SitePackage', blank=True)
+                                           
     is_syndicated = models.BooleanField(default=False,
                                         verbose_name="Syndicated")
 
@@ -476,7 +476,7 @@ class SitePackageManager(models.Manager, SitePackageMixin):
 class SitePackage(Package):
     objects = SitePackageManager()
 
-    sites = models.ManyToManyField('seo.SeoSite', null=True)
+    sites = models.ManyToManyField('seo.SeoSite')
     owner = models.ForeignKey('seo.Company', null=True, blank=True,
                               help_text='The owner of this site package. '
                                         'This should only be used if the '
@@ -636,7 +636,7 @@ class ProductGrouping(BaseModel):
 
     FILTER_BY_SITES_KWARGS = 'products__package__sitepackage__sites__in'
 
-    products = models.ManyToManyField('Product', null=True,
+    products = models.ManyToManyField('Product',
                                       through='ProductOrder',
                                       help_text=help_text['products'])
     display_order = models.IntegerField(default=0,
@@ -802,7 +802,7 @@ class CompanyProfile(models.Model):
     # Companies can associate themselves with Partner Microsites,
     # allowing them to show up on the list of available companies for
     # offline purchases.
-    customer_of = models.ManyToManyField('seo.Company', null=True,
+    customer_of = models.ManyToManyField('seo.Company',
                                          blank=True, related_name='customer')
 
     blocked_users = models.ManyToManyField('myjobs.User',
@@ -818,7 +818,7 @@ class Request(BaseModel):
     action_taken = models.BooleanField(default=False)
     made_on = models.DateField(auto_now_add=True)
     owner = models.ForeignKey('seo.Company')
-    related_sites = models.ManyToManyField('seo.SeoSite', null=True)
+    related_sites = models.ManyToManyField('seo.SeoSite')
     deny_reason = models.TextField(_('Reason for denying this request'),
                                    blank=True)
 

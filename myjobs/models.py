@@ -688,7 +688,7 @@ class Ticket(models.Model):
 class Shared_Sessions(models.Model):
     # session is a comma separated list stored as a string of session keys
     session = models.TextField(blank=True)
-    user = models.ForeignKey('User', unique=True)
+    user = models.OneToOneField('User')
 
 
 def save_related_session(sender, user, request, **kwargs):

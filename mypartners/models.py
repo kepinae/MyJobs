@@ -212,7 +212,7 @@ class Contact(models.Model):
     phone = models.CharField(max_length=30, verbose_name='Phone', blank=True,
             default='')
     locations = models.ManyToManyField('Location', related_name='contacts')
-    tags = models.ManyToManyField('Tag', null=True)
+    tags = models.ManyToManyField('Tag')
     notes = models.TextField(max_length=1000, verbose_name='Notes',
                              blank=True, default="")
     archived_on = models.DateTimeField(null=True)
@@ -381,7 +381,7 @@ class Partner(models.Model):
     # used if this partner was created by using the partner library
     library = models.ForeignKey('PartnerLibrary', null=True,
                                 on_delete=models.SET_NULL)
-    tags = models.ManyToManyField('Tag', null=True)
+    tags = models.ManyToManyField('Tag')
     # owner is the Company that owns this partner.
     owner = models.ForeignKey('seo.Company', null=True,
                               on_delete=models.SET_NULL)
@@ -724,7 +724,7 @@ class ContactRecord(models.Model):
                                       blank=True, default="")
     job_hires = models.CharField(max_length=6, verbose_name="Number of Hires",
                                  blank=True, default="")
-    tags = models.ManyToManyField('Tag', null=True)
+    tags = models.ManyToManyField('Tag')
     approval_status = models.OneToOneField(
         'mypartners.Status', null=True, verbose_name="Approval Status")
 

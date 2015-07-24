@@ -413,7 +413,7 @@ class RowPermissionsAdmin(admin.ModelAdmin):
         return self.form
 
     @csrf_protect_m
-    @transaction.commit_on_success
+    @transaction.atomic
     def add_view(self, request, form_url='', extra_context=None):
         """The 'add' admin view for this model."""
         model = self.model
@@ -464,7 +464,7 @@ class RowPermissionsAdmin(admin.ModelAdmin):
                                        add=True)
         
     @csrf_protect_m
-    @transaction.commit_on_success
+    @transaction.atomic
     def change_view(self, request, object_id, extra_context=None):
         """The 'change' admin view for this model."""
         model = self.model
@@ -638,7 +638,7 @@ class BillboardImageAdmin(RowPermissionsAdmin):
     )
 
     @csrf_protect_m
-    @transaction.commit_on_success
+    @transaction.atomic
     def add_view(self, request, form_url='', extra_context=None):
         """The 'add' admin view for this model."""
         model = self.model
@@ -732,7 +732,7 @@ class BillboardImageAdmin(RowPermissionsAdmin):
                                        add=True)
 
     @csrf_protect_m
-    @transaction.commit_on_success
+    @transaction.atomic
     def change_view(self, request, object_id, extra_context=None):
         """The 'change' admin view for this model."""
         model = self.model
@@ -907,7 +907,7 @@ class SeoSiteAdmin(admin.ModelAdmin):
         return actions
 
     @csrf_protect_m
-    @transaction.commit_on_success
+    @transaction.atomic
     def add_view(self, request, form_url='', extra_context=None):
         """The 'add' admin view for this model."""
         model = self.model
@@ -1002,7 +1002,7 @@ class SeoSiteAdmin(admin.ModelAdmin):
                                        add=True)
 
     @csrf_protect_m
-    @transaction.commit_on_success
+    @transaction.atomic
     def change_view(self, request, object_id, extra_context=None):
         """The 'change' admin view for this model."""
         model = self.model
