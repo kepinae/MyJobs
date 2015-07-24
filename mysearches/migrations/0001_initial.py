@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('mypartners', '0001_initial'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -47,7 +46,6 @@ class Migration(migrations.Migration):
                 ('day_of_month', models.IntegerField(blank=True, null=True, verbose_name='on', choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12), (13, 13), (14, 14), (15, 15), (16, 16), (17, 17), (18, 18), (19, 19), (20, 20), (21, 21), (22, 22), (23, 23), (24, 24), (25, 25), (26, 26), (27, 27), (28, 28), (29, 29), (30, 30)])),
                 ('day_of_week', models.CharField(blank=True, max_length=2, null=True, verbose_name='on', choices=[(b'1', 'Monday'), (b'2', 'Tuesday'), (b'3', 'Wednesday'), (b'4', 'Thursday'), (b'5', 'Friday'), (b'6', 'Saturday'), (b'7', 'Sunday')])),
                 ('send_if_none', models.BooleanField(default=False, verbose_name='Send even if there are no results', editable=False)),
-                ('user', models.OneToOneField(editable=False, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -63,7 +61,6 @@ class Migration(migrations.Migration):
                 ('date_sent', models.DateTimeField(auto_now_add=True)),
                 ('uuid', models.CharField(max_length=32, db_index=True)),
                 ('contact_record', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='mypartners.ContactRecord', null=True)),
-                ('recipient', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, null=True)),
             ],
         ),
         migrations.CreateModel(
@@ -74,14 +71,8 @@ class Migration(migrations.Migration):
                 ('partner_message', models.TextField(help_text=b'Use this field to provide a customized greeting that will be sent with each copy of this saved search.', blank=True)),
                 ('unsubscribed', models.BooleanField(default=False)),
                 ('unsubscriber', models.EmailField(verbose_name=b'Unsubscriber', max_length=255, editable=False, blank=True)),
-                ('created_by', models.ForeignKey(related_name='created_by', on_delete=django.db.models.deletion.SET_NULL, editable=False, to=settings.AUTH_USER_MODEL, null=True)),
                 ('partner', models.ForeignKey(to='mypartners.Partner')),
             ],
             bases=('mysearches.savedsearch',),
-        ),
-        migrations.AddField(
-            model_name='savedsearch',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, editable=False, to=settings.AUTH_USER_MODEL, null=True),
         ),
     ]
