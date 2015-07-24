@@ -12,6 +12,26 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
+def get_location(link_type, filename):
+    filename, extension = os.path.splitext(filename)
+    filename = '.'.join([re.sub(r'[\W]', '', filename),
+                         re.sub(r'[\W]', '', extension)])
+
+    if not filename or filename == '.':
+        filename = 'unnamed_file'
+
+    uid = uuid.uuid4()
+    location_template = '/social-icons/%s/%s/%s'
+    if (getattr(settings, 'DEFAULT_FILE_STORAGE') !=
+            'storages.backends.s3boto.S3BotoStorage'):
+        location_template = 'files/' + location_template
+    location = location_template % (uid, link_type.site, filename)
+    while default_storage.exists(location):
+        uid = uuid.uuid4()
+        location = location_template % (uid, link_type.site, filename)
+    return location
+
+
 class SocialLinkType(models.Model):
     def __unicode__(self):
         return self.site
@@ -21,24 +41,6 @@ class SocialLinkType(models.Model):
         super(SocialLinkType, self).delete(*args, **kwargs)
         default_storage.delete(filename)
 
-    def get_location(self, filename):
-        filename, extension = os.path.splitext(filename)
-        filename = '.'.join([re.sub(r'[\W]', '', filename),
-                             re.sub(r'[\W]', '', extension)])
-
-        if not filename or filename == '.':
-            filename = 'unnamed_file'
-
-        uid = uuid.uuid4()
-        location_template = '/social-icons/%s/%s/%s'
-        if (getattr(settings, 'DEFAULT_FILE_STORAGE') !=
-                'storages.backends.s3boto.S3BotoStorage'):
-            location_template = 'files/' + location_template
-        location = location_template % (uid, self.site, filename)
-        while default_storage.exists(location):
-            uid = uuid.uuid4()
-            location = location_template % (uid, self.site, filename)
-        return location
 
     @classmethod
     def icon_choices(cls):
