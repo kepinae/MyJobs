@@ -190,6 +190,7 @@ class ChangePasswordForm(Form):
 class UserAdminForm(ModelForm):
     class Meta:
         model = User
+        fields = '__all__'
 
     # Used to update/change a password.
     new_password = CharField(label='New password', required=False)
