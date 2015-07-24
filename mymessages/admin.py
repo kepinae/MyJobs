@@ -7,6 +7,7 @@ from mymessages.models import Message
 class AdminMessageForm(forms.ModelForm):
     class Meta:
         model = Message
+        fields = '__all__'
 
 
 class AdminMessage(admin.ModelAdmin):

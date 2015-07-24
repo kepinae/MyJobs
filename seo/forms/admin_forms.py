@@ -323,6 +323,7 @@ class SeoSiteForm(RowPermissionsForm):
 
     class Meta:
         model = SeoSite
+        fields = '__all__'
 
 
 class SiteRowPermissionsForm(RowPermissionsForm):
@@ -487,6 +488,7 @@ class CustomPageForm(SiteRowPermissionsForm):
 
     class Meta:
         model = CustomPage
+        fields = '__all__'
         
 
 class BillboardImageForm(SiteRowPermissionsForm):
@@ -527,6 +529,7 @@ class BillboardImageForm(SiteRowPermissionsForm):
 
     class Meta:
         model = BillboardImage
+        fields = '__all__'
 
 
 class ConfigurationForm(RowPermissionsForm):
@@ -609,6 +612,7 @@ class ConfigurationForm(RowPermissionsForm):
 class BusinessUnitForm(SeoSiteReverseForm):    
     class Meta:
         model = BusinessUnit
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(BusinessUnitForm, self).__init__(*args, **kwargs)
@@ -675,31 +679,37 @@ class CompanyForm(SeoSiteReverseForm):
                                                 widget=job_source_ids_widget)
     class Meta:
         model = Company
+        fields = '__all__'
         
         
 class SpecialCommitmentForm(SeoSiteReverseForm):        
     class Meta:
         model = SpecialCommitment
+        fields = '__all__'
 
 
 class SiteTagForm(forms.ModelForm):
     class Meta:
         model = SiteTag
+        fields = '__all__'
 
 
 class GoogleAnalyticsCampaignForm(SeoSiteReverseForm):        
     class Meta:
         model = GoogleAnalyticsCampaign
+        fields = '__all__'
 
 
 class ATSSourceCodeForm(SeoSiteReverseForm):        
     class Meta:
         model = ATSSourceCode
+        fields = '__all__'
 
 
 class ViewSourceForm(SeoSiteReverseForm):        
     class Meta:
         model = ViewSource
+        fields = '__all__'
 
 
 class UploadJobFileForm(forms.Form):

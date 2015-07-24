@@ -332,6 +332,7 @@ class GoogleAnalyticsForm(forms.ModelForm):
 
     class Meta:
         model = GoogleAnalytics
+        fields = '__all__'
 
         
 class GoogleAnalyticsAdmin(admin.ModelAdmin):
