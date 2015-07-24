@@ -73,7 +73,7 @@ STATICFILES_FINDERS = (
 ADMIN_MEDIA_PREFIX = '//d2e48ltfsb5exy.cloudfront.net/myjobs/admin/'
 
 TEMPLATE_DIRS = (
-    join(ROOT_PATH, 'templates')
+    join(ROOT_PATH, 'templates'),
 )
 
 TEMPLATE_LOADERS = (
@@ -262,7 +262,6 @@ INSTALLED_APPS = (
     'djcelery',
     'django_jenkins',
     'widget_tweaks',
-    'south',
     'django_nose',
     'tastypie',
     'captcha',
@@ -480,14 +479,6 @@ TEST_SOLR_INSTANCE = {
 MINUTES_TO_CACHE = 120
 CACHE_MIDDLEWARE_KEY_PREFIX = 'this'
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
-
-
-# South
-SOUTH_TESTS_MIGRATE = False
-SKIP_SOUTH_TESTS = True
-SOUTH_MIGRATION_MODULES = {
-    'taggit': 'taggit.south_migrations',
-}
 
 
 # Default haystack settings. Should be overwritten by settings.py.

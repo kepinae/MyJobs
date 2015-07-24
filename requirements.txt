@@ -17,11 +17,11 @@ django-haystack==2.1.0
 django-jenkins==0.15.0
 django-passwords==0.2.0
 django-memcached==0.1.2
-django-nose==1.1
+django-nose==1.4.1
 django-recaptcha==1.0
 django-storages==1.1.4
 django-taggit==0.16.2
-django-tastypie==0.9.15
+django-tastypie==0.12.2
 django-widget-tweaks==1.1.2
 factory_boy==2.5.0
 git+git://github.com/DirectEmployers/django-fsm-widget.git@dc928b0b034a3f4c456e83b3e4511c53a24b98a5
