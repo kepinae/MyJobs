@@ -246,6 +246,7 @@ class RegistrationForm(forms.Form):
 class InvitationForm(forms.ModelForm):
     class Meta:
         model = Invitation
+        fields = '__all__'
 
     def clean_invitee_email(self):
         invitee_email = self.cleaned_data['invitee_email']
