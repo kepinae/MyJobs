@@ -833,40 +833,42 @@ MAX_ATTACHMENT_MB = 4
 S3_CONNECTION = 'S3Connection:s3.amazonaws.com'
 
 
-class PRMAttachment(models.Model):
+def get_file_name(attachment, filename):
+    """
+    Ensures that a file name is unique before uploading.
+    The PRMAttachment instance requires an extra attribute,
+    partner (a Partner instance) to be set in order to create the
+    file name.
 
-    def get_file_name(self, filename):
-        """
-        Ensures that a file name is unique before uploading.
-        The PRMAttachment instance requires an extra attribute,
-        partner (a Partner instance) to be set in order to create the
-        file name.
+    """
+    filename, extension = path.splitext(filename)
+    filename = '.'.join([sub(r'[\W]', '', filename),
+                         sub(r'[\W]', '', extension)])
 
-        """
-        filename, extension = path.splitext(filename)
-        filename = '.'.join([sub(r'[\W]', '', filename),
-                             sub(r'[\W]', '', extension)])
+    # If the uploaded file only contains invalid characters the end
+    # result will be a file named "."
+    if not filename or filename == '.':
+        filename = 'unnamed_file'
 
-        # If the uploaded file only contains invalid characters the end
-        # result will be a file named "."
-        if not filename or filename == '.':
-            filename = 'unnamed_file'
+    uid = uuid4()
+    path_addon = "mypartners/%s/%s/%s" % (attachment.partner.owner.pk,
+                                          attachment.partner.pk, uid)
+    name = "%s/%s" % (path_addon, filename)
 
+    # Make sure that in the unlikely event that a filepath/uid/filename
+    # combination isn't actually unique a new unique id
+    # is generated.
+    while default_storage.exists(name):
         uid = uuid4()
-        path_addon = "mypartners/%s/%s/%s" % (self.partner.owner.pk,
-                                              self.partner.pk, uid)
+        path_addon = "mypartners/%s/%s/%s" % (attachment.partner.owner,
+                                              attachment.partner.name, uid)
         name = "%s/%s" % (path_addon, filename)
 
-        # Make sure that in the unlikely event that a filepath/uid/filename
-        # combination isn't actually unique a new unique id
-        # is generated.
-        while default_storage.exists(name):
-            uid = uuid4()
-            path_addon = "mypartners/%s/%s/%s" % (self.partner.owner,
-                                                  self.partner.name, uid)
-            name = "%s/%s" % (path_addon, filename)
+    return name
 
-        return name
+
+class PRMAttachment(models.Model):
+
 
     attachment = models.FileField(upload_to=get_file_name, blank=True,
                                   null=True, max_length=767)
