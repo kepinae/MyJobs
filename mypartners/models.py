@@ -188,8 +188,6 @@ class Location(models.Model):
     def __unicode__(self):
         return ", ".join(filter(bool, [self.city, self.state]))
 
-    natural_key = __unicode__
-
     def save(self, **kwargs):
         super(Location, self).save(**kwargs)
 
@@ -281,8 +279,6 @@ class Contact(models.Model):
         if self.email:
             return self.email
         return 'Contact object'
-
-    natural_key = __unicode__
 
     def save(self, *args, **kwargs):
         """
@@ -451,8 +447,6 @@ class Partner(models.Model):
     def __unicode__(self):
         return self.name
 
-    natural_key = __unicode__
-
     # get_searches_for_partner
     def get_searches(self):
         saved_searches = self.partnersavedsearch_set.all()
@@ -593,8 +587,6 @@ class PartnerLibrary(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    natural_key = __unicode__
 
     def save(self, *args, **kwargs):
         self.has_valid_location = self.st.upper() in states.keys()
@@ -958,9 +950,6 @@ class Tag(models.Model):
 
     def __unicode__(self):
         return "%s for %s" % (self.name, self.company.name)
-
-    def natural_key(self):
-        return self.name
 
     class Meta:
         unique_together = ('name', 'company')

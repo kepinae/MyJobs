@@ -125,7 +125,7 @@ def serialize(fmt, data, values=None, order_by=None):
             values = [value.split('__')[0] for value in values]
         data = [dict({'pk': record['pk']}, **record['fields'])
                 for record in serializers.serialize(
-                    'python', data, use_natural_keys=True, fields=values)]
+                    'python', data, fields=values)]
 
     if data:
         values = values or sorted(data[0].keys())
