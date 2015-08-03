@@ -89,6 +89,12 @@ class ModelTests(MyJobsBase):
         locations = JobLocationFactory.create_batch(2)
         job.locations = locations
         job.save()
+
+        guid = locations[0].guid
+        locations[0].delete()
+        self.assertEqual(self.ms_solr.search('guid:%s' % guid).hits, 0)
+        self.assertEqual(self.ms_solr.search('guid:%s' % locations[1].guid).hits, 1)
+
         job.remove_from_solr()
 
         guids = " OR ".join(job.guids())
@@ -161,7 +167,7 @@ class ModelTests(MyJobsBase):
         exp_date = date.today() + timedelta(self.product.posting_window_length)
         self.assertEqual(self.purchased_product.expiration_date, exp_date)
         return PurchasedJobFactory(
-            owner=self.company, created_by=self.user, 
+            owner=self.company, created_by=self.user,
             purchased_product=self.purchased_product, pk=pk)
 
     def test_purchased_job_add(self):
@@ -309,7 +315,7 @@ class ModelTests(MyJobsBase):
 
         # Already approved jobs should not generate an additional request.
         PurchasedJobFactory(
-            owner=self.company, created_by=self.user, 
+            owner=self.company, created_by=self.user,
             purchased_product=self.purchased_product, is_approved=True)
 
         self.assertEqual(PurchasedJob.objects.all().count(), 2)
@@ -337,7 +343,7 @@ class ModelTests(MyJobsBase):
         for x in range(1, 15):
             PurchasedProduct.objects.all().delete()
             OfflineProduct.objects.all().delete()
-            OfflineProductFactory(product=product, 
+            OfflineProductFactory(product=product,
                                   offline_purchase=offline_purchase,
                                   product_quantity=x)
             OfflineProductFactory(product=product_two,
