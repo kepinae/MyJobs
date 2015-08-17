@@ -75,6 +75,28 @@ class ModelTests(MyJobsBase):
         self.assertEqual(Job.objects.all().count(), 0)
         self.assertEqual(JobLocation.objects.all().count(), 0)
 
+    def test_add_remove_job_locations(self):
+        """
+        Regression test, job locations that were removed from a job weren't
+        being removed from Solr
+        Tests that adding or removing locations results in Solr updates after
+        a job save
+        """
+        job = JobFactory(owner=self.company, created_by=self.user)
+        locations = JobLocationFactory.create_batch(2)
+        job.locations = locations
+        job.save()
+
+        self.assertEqual(self.ms_solr.search('*:*').hits, 2)
+
+        guid = locations[0].guid
+        job.locations.remove(locations[0])
+        job.save()
+        self.assertEqual(self.ms_solr.search('guid:%s' % guid).hits, 0)
+        self.assertEqual(self.ms_solr.search('guid:%s' %
+                                             locations[1].guid).hits, 1)
+
+
     def test_job_add_to_solr(self):
         job = JobFactory(owner=self.company, created_by=self.user)
         job.locations.add(JobLocationFactory())
@@ -89,12 +111,6 @@ class ModelTests(MyJobsBase):
         locations = JobLocationFactory.create_batch(2)
         job.locations = locations
         job.save()
-
-        guid = locations[0].guid
-        locations[0].delete()
-        self.assertEqual(self.ms_solr.search('guid:%s' % guid).hits, 0)
-        self.assertEqual(self.ms_solr.search('guid:%s' % locations[1].guid).hits, 1)
-
         job.remove_from_solr()
 
         guids = " OR ".join(job.guids())

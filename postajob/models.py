@@ -8,6 +8,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.db import models, DEFAULT_DB_ALIAS
+from django.db.models import Count
 from django.db.models.query import QuerySet
 from django.db.models.signals import pre_delete
 from django.template.loader import render_to_string
@@ -252,7 +253,6 @@ class Job(BaseModel):
 
     def remove_from_solr(self):
         from import_jobs import delete_by_guid
-
         guids = [location.guid for location in self.locations.all()]
         delete_by_guid(guids)
 

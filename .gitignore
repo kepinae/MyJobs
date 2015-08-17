@@ -25,7 +25,9 @@ static/redirect.css
 .tmp*
 content_226
 .coverage
+.ropeproject
 *.swp
+*.swo
 
 # Secret Stuff
 secrets*
