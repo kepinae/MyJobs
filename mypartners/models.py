@@ -716,6 +716,10 @@ class PRMAttachment(models.Model):
     contact_record = models.ForeignKey(ContactRecord, null=True,
                                        on_delete=models.SET_NULL)
 
+    @property
+    def partner(self):
+        return getattr(self.contact_record, 'partner', None)
+
     def save(self, *args, **kwargs):
         instance = super(PRMAttachment, self).save(*args, **kwargs)
 

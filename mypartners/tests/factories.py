@@ -99,3 +99,12 @@ class LocationFactory(factory.django.DjangoModelFactory):
     city = fuzzy.FuzzyText()
     state = fuzzy.FuzzyText(length=2, chars=string.ascii_uppercase)
     postal_code = fuzzy.FuzzyInteger(10000, 99999)
+
+
+class PRMAttachmentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "mypartners.PRMAttachment"
+
+    attachment = factory.django.FileField(
+        filename='attachment.txt', data=b'This is an attachment.')
+    contact_record = factory.SubFactory(ContactRecordFactory)
