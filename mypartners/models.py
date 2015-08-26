@@ -720,6 +720,12 @@ class PRMAttachment(models.Model):
     def partner(self):
         return getattr(self.contact_record, 'partner', None)
 
+    @partner.setter
+    def partner(self, partner):
+        # TODO: find all parts in code which attempt to set the partner
+        # attribute and remove them
+        pass
+
     def save(self, *args, **kwargs):
         instance = super(PRMAttachment, self).save(*args, **kwargs)
 
