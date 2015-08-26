@@ -3,9 +3,11 @@ from datetime import datetime, timedelta
 import random
 
 from mypartners import helpers
+from mypartners.forms import ContactRecordForm
 from mypartners.tests.test_views import (MyPartnersTestCase,
                                          PartnerLibraryTestCase)
-from mypartners.tests.factories import ContactRecordFactory, PartnerFactory
+from mypartners.tests.factories import (ContactRecordFactory, PartnerFactory,
+                                        PRMAttachmentFactory)
 
 
 
@@ -62,17 +64,16 @@ class HelpersTests(MyPartnersTestCase):
                 self.assertEqual("View All", date_str)
 
     def test_get_form_delta(self):
-        from mypartners.tests.factories import *
-        from mypartners.forms import ContactRecordForm
-
+        """Test that all form changes are properly logged as a delta."""
         attachment = PRMAttachmentFactory()
         contact_record = attachment.contact_record
         form = ContactRecordForm(instance=contact_record, 
                                  partner=attachment.partner)
 
-        # figure out the syntax for form save with deleted attachment
-        # assert no errors
-        # check the delta
+        # TODO:
+        # - figure out the syntax for form save with deleted attachment
+        # - assert no errors
+        # - check the delta
 
 
     def test_start_date_before_end_date(self):
