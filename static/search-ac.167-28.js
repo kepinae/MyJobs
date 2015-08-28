@@ -11,7 +11,7 @@ $(document).ready(function(){
         Modified item
         
         **/
-        var term = this.term
+        var term = this.term;
         if((term.charAt(0)=='"' && term.charAt(term.length-1) == '"')){
             term = this.term.substr(1,term.length-2);
         }else{
@@ -101,7 +101,11 @@ $(document).ready(function(){
             $(".ui-autocomplete li.ui-menu-item:odd").addClass("ui-menu-item-alternate");
             $(".ui-autocomplete li.ui-menu-item a").removeClass("ui-corner-all");
         },
-		minLength: 2
+		minLength: 2,
+        select: function(event, ul) {
+            event.preventDefault();
+            $(this).val('"' + ul.item.label + '"');
+        }
 	});
     $( ".micrositeMOCField" ).autocomplete({   
         /**
