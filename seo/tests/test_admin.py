@@ -78,23 +78,3 @@ class SeoAdminTestCase(DirectSEOBase):
         self.assertContains(resp, "field-parent_site errors")
         with self.assertRaises(ObjectDoesNotExist):
             created_site = SeoSite.objects.get(domain='newdomain_testnochildchild')
-
-    def test_seo_site_parent_cannot_become_child(self):
-        """
-            Ensure a child SEO Site cannot be a parent via the admin form
-        """
-        super_parent_seo_site = factories.SeoSiteFactory()
-        parent_seo_site = factories.SeoSiteFactory()
-        child_seo_site = factories.SeoSiteFactory()
-        child_seo_site.parent_site = parent_seo_site
-        child_seo_site.save()
-        resp = self.client.post(reverse('admin:seo_seosite_change',args=(parent_seo_site.pk,)),
-                                {'domain':'newdomain_testparentnochildbecome',
-                                'name':parent_seo_site.name,
-                                'group':parent_seo_site.group.pk,
-                                'postajob_filter_type':parent_seo_site.postajob_filter_type,
-                                'parent_site':super_parent_seo_site.pk})
-        self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, "field-parent_site errors")
-        parent_site_refresh = SeoSite.objects.get(pk = parent_seo_site.pk)
-        self.assertEqual(parent_site_refresh.parent_site, None)
