@@ -4,7 +4,6 @@ from unittest import skip
 
 
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.core.urlresolvers import reverse
 
