@@ -7,5 +7,6 @@ Overview
 My Partners is a module designed to track recruitment efforts by Partners (client-company employees) toward
 Contacts (prospective employees).
 
-.. automodule:: myjobs.mypartners.models
+.. automodule:: mypartners.models
+    :members:
 
