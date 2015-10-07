@@ -12,6 +12,7 @@ from django.template import RequestContext
 from django.views.generic import TemplateView
 from myjobs.decorators import user_is_allowed
 from myjobs.helpers import expire_login
+from registration.helpers import create_login_page
 from registration.models import ActivationProfile
 from registration.forms import RegistrationForm
 from myblocks.models import Page
@@ -177,20 +178,24 @@ class DseoLogin(BlockView):
 
         """
         if request.user.is_authenticated() and request.user.is_staff:
-            try:
-                page = Page.objects.filter(sites=settings.SITE,
-                                           status=Page.STAGING,
-                                           page_type=self.page_type)[0]
+            page = Page.objects.filter(sites=settings.SITE,
+                                       status=Page.STAGING,
+                                       page_type=self.page_type).first()
+            if page is not None:
                 setattr(self, 'page', page)
                 return page
-            except IndexError:
-                pass
 
-        try:
-            page = Page.objects.filter(sites=settings.SITE,
-                                       status=Page.PRODUCTION,
-                                       page_type=self.page_type)[0]
-        except IndexError:
+        page = Page.objects.filter(sites=settings.SITE,
+                                   status=Page.PRODUCTION,
+                                   page_type=self.page_type).first()
+        if page is None:
+            page = create_login_page()
+            # Rather than creating a Page programmatically, we could always use
+            # a known generic one.
+            #page = Page.objects.filter(sites=1,
+            #                           status=Page.PRODUCTION,
+            #                           page_type=self.page_type).first()
+        if page is None:
             raise Http404
         setattr(self, 'page', page)
         return page
