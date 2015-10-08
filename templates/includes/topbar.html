@@ -51,10 +51,10 @@
                     <li class="{% active_tab 'employer-tools' %} has-drop">
                         <a>{% trans "Employers" %}</a>
                         <ul id="employer-apps" class="submenu">
-                            {% if company.prm_access %}
+                            {% if company.member %}
                                 <li><a id="partner-tab" href="{{ ABSOLUTE_URL }}prm/view">{% trans "PRM" %}</a></li>
                             {% endif %}
-                            {% if company.prm_access %}
+                            {% if company.member %}
                                 <li><a id="reports-tab" href="{{ ABSOLUTE_URL }}reports/view/overview">{% trans "Reports" %}</a></li>
                             {% endif %}
                             {% if company.product_access %}
@@ -120,7 +120,7 @@
 
                                         <li><a id="savedsearch-link" class="no-show seeker-menu" href="{{ ABSOLUTE_URL }}saved-search/view/">{% trans "My Saved Searches" %}</a></li>
 
-                                        {% if company.prm_access  %}
+                                        {% if company.member  %}
 
                                             <li><a id="employer-tools" class="no-show desktop_hide" style="cursor: pointer;">{% trans "Employer" %}</a></li>
 
@@ -128,7 +128,7 @@
                                             <li><a id="partner-link" class="no-show sub-nav-item employer-menu" href="{{ ABSOLUTE_URL }}prm/view?company={{ company.id }}">{% trans "PRM" %}</a></li>
 
                                         {% endif %}
-                                        {% if company.prm_access %}
+                                        {% if company.member %}
                                             <li><a id="reports-link" class="no-show sub-nav-item employer-menu" href="{{ ABSOLUTE_URL }}reports/view/overview">{% trans "Reports" %}</a></li>
                                         {% endif %}
                                         {% if company.product_access %}

@@ -758,7 +758,6 @@ class Company(models.Model):
                                                     blank=True)
 
     # Permissions
-    prm_access = models.BooleanField(default=False)
     product_access = models.BooleanField(default=False)
     posting_access = models.BooleanField(default=False)
     user_created = models.BooleanField(default=False)
@@ -793,11 +792,6 @@ class Company(models.Model):
     def has_packages(self):
         return self.sitepackage_set.filter(
             sites__in=settings.SITE.postajob_site_list()).exists()
-
-
-@receiver(pre_save, sender=Company, dispatch_uid='pre_save_company_signal')
-def update_prm_access(sender, instance, **kwargs):
-    instance.prm_access = instance.member
 
 
 class FeaturedCompany(models.Model):
