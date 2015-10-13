@@ -402,6 +402,26 @@ def report_types_api(request):
 
 
 @has_access('prm')
+@require_http_methods(['POST'])
+def run_dynamic_report(request):
+    config_id = request.POST['configuration_id']
+    config = Configuration.objects.get(id=config_id)
+
+    company = request.user.companyuser_set.first().company
+
+    report = DynamicReport.objects.create(
+        configuration=config,
+        owner=company)
+
+    report.regenerate()
+    report.save()
+
+    data = {'id': report.id}
+    return HttpResponse(content_type='application/json',
+                        content=json.dumps(data))
+
+
+@has_access('prm')
 @require_http_methods(['GET'])
 def download_dynamic_report(request):
     """

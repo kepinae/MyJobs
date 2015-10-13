@@ -19,6 +19,7 @@
     </div>
     <!-- This UI is a placeholder for QA purposes.
          It is not intended to set any precedent. -->
+    <h3>Walk through report types API</h3>
     <div id="select-container" class="row">
         <div class="span12">
             <div id="select-content"></div>
@@ -27,6 +28,21 @@
     <div id="report-types-container" class="row">
         <div class="span12">
             <div id="report-types-content"></div>
+        </div>
+    </div>
+
+    <hr>
+    <h3>Run trivial contact records report</h3>
+    <div class="row">
+        <div class="span12">
+            <input id="trivial-report-contact-id"
+                placeholder="Configuration Id; Try 3">
+            <a id="trivial-report-run" class="btn" href="#">Run</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <ul id='report-links-list'></ul>
         </div>
     </div>
 {% endblock %}
@@ -38,6 +54,35 @@
 </script>
 <script type="text/javascript">
 var csrf = read_cookie("csrftoken");
+
+function runReport() {
+    var configId = $('#trivial-report-contact-id').val();
+    ajaxRunReport(configId).done(function(data) {
+        var reportId = data['id'];
+        var list = $('#report-links-list');
+        var href = '/reports/view/dynamicdownload?id=' + reportId;
+        var dom = $('<li><a href="' + href + '">Report: ' + reportId + '</a></li>');
+        list.append(dom);
+    }).fail(function(xhr, text, error) { console.error(text, error, xhr) });
+}
+
+function ajaxRunReport(configId) {
+    return $.ajax({
+        url: "/reports/api/run_report",
+        type: "POST",
+        dataType: "json",
+        data: {csrfmiddlewaretoken: csrf,
+            configuration_id: configId},
+        withCredentials: true,
+    });
+}
+
+$(document).on('ready', function() {
+    $('#trivial-report-run').click(function() {
+        runReport();
+        return false;
+    });
+});
 
 function resetReportingTypes() {
     ajaxReportingTypes().done(function(data) {

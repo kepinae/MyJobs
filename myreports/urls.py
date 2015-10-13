@@ -20,4 +20,5 @@ urlpatterns = patterns(
         name='reporting_types_api'),
     url(r'^api/report_types$', 'report_types_api',
         name='report_types_api'),
+    url(r'^api/run_report$', 'run_dynamic_report', name='run_dynamic_report')
 )

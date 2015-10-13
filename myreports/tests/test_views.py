@@ -436,14 +436,14 @@ class TestDynamicReports(MyReportsTestCase):
         partner = PartnerFactory(owner=self.company)
         for i in range(0, 10):
             ContactFactory.create(name="name-%s" % i, partner=partner)
-        config = Configuration.objects.get(id=3)
-        report = DynamicReport.objects.create(
-            configuration=config,
-            owner=self.company)
-        report.regenerate()
+
+        resp = self.client.post(reverse('run_dynamic_report'),
+                                {'configuration_id': 3})
+        self.assertEqual(200, resp.status_code)
+        report_id = json.loads(resp.content)['id']
 
         resp = self.client.get(reverse('download_dynamic_report'),
-                               {'id': report.pk})
+                               {'id': report_id})
         self.assertEquals(200, resp.status_code)
         lines = resp.content.splitlines()
         self.assertEquals(11, len(lines))
