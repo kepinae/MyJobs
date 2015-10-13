@@ -1,7 +1,9 @@
 from myreports.tests.setup import MyReportsTestCase
 
-from myreports.models import UserType, ReportingType, ReportType
+from myreports.models import (
+    UserType, ReportingType, ReportType, Configuration, DynamicReport)
 from myjobs.tests.factories import UserFactory
+from mypartners.tests.factories import ContactFactory, PartnerFactory
 from seo.tests.factories import CompanyUserFactory
 
 
@@ -41,3 +43,21 @@ class TestModels(MyReportsTestCase):
                         .active_for_reporting_type(reporting_type))
         names = set(t.report_type for t in report_types)
         self.assertEqual(set(['Partners', 'Communication Records']), names)
+
+
+class TestDynamicReport(MyReportsTestCase):
+    fixtures = ['class_and_pres.json']
+
+    def test_report(self):
+        """Run a dynamic report through it's paces."""
+
+        partner = PartnerFactory(owner=self.company)
+        for i in range(0, 10):
+            ContactFactory.create(name="name-%s" % i, partner=partner)
+
+        config = Configuration.objects.get(id=3)
+        report = DynamicReport.objects.create(
+            configuration=config,
+            owner=self.company)
+        report.regenerate()
+        self.assertEqual(10, len(report.python))

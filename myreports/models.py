@@ -174,7 +174,8 @@ class PresentationType(models.Model):
 
 
 class Column(models.Model):
-    table_name = models.CharField(max_length=50)
+    app_name = models.CharField(max_length=50, null=True)
+    model_name = models.CharField(max_length=50, null=True)
     column_name = models.CharField(max_length=50)
     is_active = models.BooleanField(default=False)
 
@@ -209,3 +210,78 @@ class ConfigurationColumn(models.Model):
     column_formats = models.ManyToManyField(
         'ColumnFormat', through='ConfigurationColumnFormats')
     is_active = models.BooleanField(default=False)
+
+
+class DynamicReport(models.Model):
+    """
+    Models a Report which was generated from a Configuration.
+
+    The report can be serialized in various formats.
+
+    A report instance can access it's results in three ways:
+        `json`: returns a JSON string of the results
+        `python`: returns a `dict` of the results
+        `queryset`: returns a queryset obtained by re-running `from_search`
+                    with the report's parameters. Useful for when you need to
+                    use attributes from a related model's instances (eg.
+                    `referrals` from the `ContactRecord` model).
+    """
+    created_by = models.ForeignKey(
+        'myjobs.User', null=True, on_delete=models.SET_NULL)
+    created_on = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey('seo.Company')
+    configuration = models.ForeignKey('myreports.Configuration')
+    results = models.FileField(upload_to='reports')
+
+    company_ref = 'owner'
+
+    objects = SearchParameterManager()
+
+    def __init__(self, *args, **kwargs):
+        super(DynamicReport, self).__init__(*args, **kwargs)
+        self._results = '{}'
+        # XXX: Where will this come from?
+        self.filters = {}
+        # XXX: name report better
+        self.name = "Dynamic Report Name"
+
+        if self.results:
+            try:
+                self._results = self.results.read()
+            except IOError:
+                # If we are here, the file can't be found, which is usually the
+                # case when testing locally and pointing to
+                # QC/Staging/Production.
+                pass
+
+    @property
+    def json(self):
+        return self._results
+
+    @property
+    def python(self):
+        return json.loads(self._results)
+
+    @property
+    def queryset(self):
+        # XXX: Assumes all columns come from one model.
+        fc_config = (self.configuration
+                     .configurationcolumn_set
+                     .filter(is_active=True,
+                             column__is_active=True)
+                     .first())
+        model = get_model(fc_config.column.app_name,
+                          fc_config.column.model_name)
+
+        return model.objects.from_search(self.owner, self.filters)
+
+    def regenerate(self):
+        """Regenerate the report file if it doesn't already exist on disk."""
+        contents = serialize('json', self.queryset)
+        results = ContentFile(contents)
+
+        if self.results:
+            self.results.delete()
+
+        self.results.save('%s-%s.json' % (self.name, self.pk), results)
+        self._results = contents

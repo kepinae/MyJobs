@@ -12,7 +12,8 @@ from django.views.generic import View
 from django.views.decorators.http import require_http_methods
 
 from myreports.helpers import humanize, serialize
-from myreports.models import Report, ReportingType, ReportType
+from myreports.models import (
+    Report, ReportingType, ReportType, Configuration, DynamicReport)
 from postajob import location_data
 from universal.helpers import get_company_or_404
 from universal.decorators import has_access
@@ -398,3 +399,45 @@ def report_types_api(request):
             dict(entry(rt) for rt in report_types)}
     return HttpResponse(content_type='application/json',
                         content=json.dumps(data))
+
+
+@has_access('prm')
+@require_http_methods(['GET'])
+def download_dynamic_report(request):
+    """
+    Download dynamic report as CSV.
+
+    Query String Parameters:
+        :id: ID of the report to download
+        :values: Fields to include in the resulting CSV, as well as the order
+                 in which to include them.
+        :order_by: The sort order for the resulting CSV.
+
+    Outputs:
+        The report with the specified options rendered as a CSV file.
+    """
+
+    report_id = request.GET.get('id', 0)
+    values = request.GET.getlist('values', None)
+    order_by = request.GET.get('order_by', None)
+
+    report = DynamicReport.objects.get(id=report_id)
+
+    if order_by:
+        report.order_by = order_by
+        report.save()
+
+    if values:
+        report.values = json.dumps(values)
+        report.save()
+
+    records = humanize(report.python)
+
+    response = HttpResponse(content_type='text/csv')
+    content_disposition = "attachment; filename=%s-%s.csv"
+    response['Content-Disposition'] = content_disposition % (
+        report.name.replace(' ', '_'), report.pk)
+
+    response.write(serialize('csv', records, values=values, order_by=order_by))
+
+    return response

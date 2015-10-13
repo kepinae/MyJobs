@@ -163,8 +163,189 @@
     {
         "model": "myreports.ReportingTypeReportTypes",
         "fields": {"report_type": 6, "reporting_type": 2, "is_active": false}
-    }
+    },
 
+    {
+        "model": "myreports.Configuration",
+        "pk": 1,
+        "fields": {"name": "Inactive",
+                   "is_active": false}
+    },
+
+    {
+        "model": "myreports.Configuration",
+        "pk": 2,
+        "fields": {"name": "Maybe Inactive",
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.Configuration",
+        "pk": 3,
+        "fields": {"name": "Basic Report",
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.Column",
+        "pk": 1,
+        "fields": {"app_name": "zzz",
+                   "model_name": "Inactive",
+                   "column_name": "zzz",
+                   "is_active": false}
+    },
+
+    {
+        "model": "myreports.Column",
+        "pk": 2,
+        "fields": {"app_name": "zzz",
+                   "model_name": "MaybeActive",
+                   "column_name": "zzz",
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.Column",
+        "pk": 3,
+        "fields": {"app_name": "mypartners",
+                   "model_name": "Contact",
+                   "column_name": "date_time",
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.Column",
+        "pk": 4,
+        "fields": {"app_name": "mypartners",
+                   "model_name": "Contact",
+                   "column_name": "locations.state",
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.Column",
+        "pk": 5,
+        "fields": {"app_name": "mypartners",
+                   "model_name": "Contact",
+                   "column_name": "locations.city",
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.Column",
+        "pk": 6,
+        "fields": {"app_name": "mypartners",
+                   "model_name": "Contact",
+                   "column_name": "locations.city",
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.Column",
+        "pk": 7,
+        "fields": {"app_name": "mypartners",
+                   "model_name": "Contact",
+                   "column_name": "tags",
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.Column",
+        "pk": 8,
+        "fields": {"app_name": "mypartners",
+                   "model_name": "Contact",
+                   "column_name": "partner",
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.InterfaceElementType",
+        "pk": 1,
+        "fields": {"interface_element_type": "inactive",
+                   "description": "Inactive Element Type",
+                   "element_code": "div",
+                   "is_active": false}
+    },
+
+    {
+        "model": "myreports.ConfigurationColumn",
+        "pk": 1,
+        "fields": {"configuration": 3,
+                   "interface_element_type": 1,
+                   "column": 1,
+                   "multi_value_expansion": false,
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.ConfigurationColumn",
+        "pk": 2,
+        "fields": {"configuration": 3,
+                   "interface_element_type": 1,
+                   "column": 2,
+                   "multi_value_expansion": false,
+                   "is_active": false}
+    },
+
+    {
+        "model": "myreports.ConfigurationColumn",
+        "pk": 3,
+        "fields": {"configuration": 3,
+                   "interface_element_type": 1,
+                   "column": 3,
+                   "multi_value_expansion": false,
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.ConfigurationColumn",
+        "pk": 4,
+        "fields": {"configuration": 3,
+                   "interface_element_type": 1,
+                   "column": 4,
+                   "multi_value_expansion": false,
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.ConfigurationColumn",
+        "pk": 5,
+        "fields": {"configuration": 3,
+                   "interface_element_type": 1,
+                   "column": 5,
+                   "multi_value_expansion": false,
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.ConfigurationColumn",
+        "pk": 6,
+        "fields": {"configuration": 3,
+                   "interface_element_type": 1,
+                   "column": 6,
+                   "multi_value_expansion": false,
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.ConfigurationColumn",
+        "pk": 7,
+        "fields": {"configuration": 3,
+                   "interface_element_type": 1,
+                   "column": 7,
+                   "multi_value_expansion": false,
+                   "is_active": true}
+    },
+
+    {
+        "model": "myreports.ConfigurationColumn",
+        "pk": 8,
+        "fields": {"configuration": 3,
+                   "interface_element_type": 1,
+                   "column": 8,
+                   "multi_value_expansion": false,
+                   "is_active": true}
+    }
 ]
 
 

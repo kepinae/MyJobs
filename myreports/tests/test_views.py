@@ -8,7 +8,7 @@ from myjobs.tests.test_views import TestClient
 from mypartners.models import ContactRecord, Partner
 from mypartners.tests.factories import (ContactFactory, ContactRecordFactory,
                                         PartnerFactory)
-from myreports.models import Report
+from myreports.models import Report, DynamicReport, Configuration
 from myreports.tests.setup import MyReportsTestCase
 
 
@@ -425,3 +425,25 @@ class TestReportsApi(MyReportsTestCase):
         self.assertEquals("Communication Records", data['2']['name'])
         self.assertEquals("Communication Records Report",
                           data['2']['description'])
+
+
+class TestDynamicReports(MyReportsTestCase):
+    fixtures = ['class_and_pres.json']
+
+    def test_dynamic_report(self):
+        self.client.login_user(self.user)
+
+        partner = PartnerFactory(owner=self.company)
+        for i in range(0, 10):
+            ContactFactory.create(name="name-%s" % i, partner=partner)
+        config = Configuration.objects.get(id=3)
+        report = DynamicReport.objects.create(
+            configuration=config,
+            owner=self.company)
+        report.regenerate()
+
+        resp = self.client.get(reverse('download_dynamic_report'),
+                               {'id': report.pk})
+        self.assertEquals(200, resp.status_code)
+        lines = resp.content.splitlines()
+        self.assertEquals(11, len(lines))
